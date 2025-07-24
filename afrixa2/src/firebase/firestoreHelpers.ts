@@ -13,28 +13,70 @@ import {
   orderBy,
   onSnapshot,
   deleteDoc,
+  Timestamp,
+  FieldValue,
 } from 'firebase/firestore';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
+// Types
+export interface User {
+  uid: string;
+  displayName: string;
+  photoURL: string;
+  email: string;
+}
+export interface Chat {
+  id?: string;
+  members: string[];
+  isGroup: boolean;
+  groupName?: string;
+  groupImage?: string;
+  createdAt?: Timestamp | FieldValue;
+  lastMessage?: string;
+  lastMessageAt?: Timestamp | FieldValue;
+  expiresAt?: number | null;
+}
+export interface Message {
+  id?: string;
+  sender: string;
+  text?: string;
+  imageUrl?: string;
+  createdAt?: Timestamp | FieldValue;
+  editedAt?: Timestamp | FieldValue;
+  seenBy?: { uid: string; seenAt: Timestamp | FieldValue }[];
+  pending?: boolean;
+  deleting?: boolean;
+  replyTo?: string;
+}
+export interface Status {
+  id?: string;
+  uid: string;
+  displayName: string;
+  photoURL: string;
+  text?: string;
+  mediaUrl?: string;
+  createdAt?: Timestamp | FieldValue;
+  type?: string;
+}
+
 // USERS
-export const createUser = async (user: { uid: string; displayName: string; photoURL: string; email: string }) => {
+export const createUser = async (user: User) => {
   await setDoc(doc(db, 'users', user.uid), user, { merge: true });
 };
 
 export const getUser = async (uid: string) => {
   const userDoc = await getDoc(doc(db, 'users', uid));
-  return userDoc.exists() ? userDoc.data() : null;
+  return userDoc.exists() ? userDoc.data() as User : null;
 };
 
 export const searchUsers = async (search: string) => {
-  // For demo: fetch all users and filter client-side (for production, use Firestore indexing)
   const usersSnap = await getDocs(collection(db, 'users'));
-  return usersSnap.docs.map(doc => doc.data()).filter(u => u.displayName.toLowerCase().includes(search.toLowerCase()));
+  return usersSnap.docs.map(doc => doc.data() as User).filter((u) => u.displayName.toLowerCase().includes(search.toLowerCase()));
 };
 
 // CHATS
-export const createChat = async (members: string[], isGroup = false, groupName = '', groupImage = '', expiresAt = null) => {
-  const chatData: any = {
+export const createChat = async (members: string[], isGroup = false, groupName = '', groupImage = '', expiresAt: number | null = null) => {
+  const chatData: Chat = {
     members,
     isGroup,
     groupName,
@@ -42,16 +84,16 @@ export const createChat = async (members: string[], isGroup = false, groupName =
     createdAt: serverTimestamp(),
     lastMessage: '',
     lastMessageAt: serverTimestamp(),
+    expiresAt: expiresAt ?? undefined,
   };
-  if (expiresAt) chatData.expiresAt = expiresAt;
   const chatRef = await addDoc(collection(db, 'chats'), chatData);
   return chatRef.id;
 };
 
-export const getUserChats = (uid: string, callback: (chats: any[]) => void) => {
+export const getUserChats = (uid: string, callback: (chats: Chat[]) => void) => {
   const q = query(collection(db, 'chats'));
   return onSnapshot(q, (snapshot) => {
-    const chats = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const chats: Chat[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Chat));
     callback(chats.filter(chat => chat.members.includes(uid)));
   });
 };
@@ -63,7 +105,7 @@ export const addGroupMember = async (chatId: string, uid: string) => {
 };
 
 // MESSAGES
-export const sendMessage = async (chatId: string, message: any) => {
+export const sendMessage = async (chatId: string, message: Message & { imageFile?: File }) => {
   let imageUrl = '';
   if (message.imageFile) {
     const storage = getStorage();
@@ -83,15 +125,15 @@ export const sendMessage = async (chatId: string, message: any) => {
   });
 };
 
-export const getMessages = (chatId: string, callback: (messages: any[]) => void) => {
+export const getMessages = (chatId: string, callback: (messages: Message[]) => void) => {
   const q = query(collection(db, 'chats', chatId, 'messages'), orderBy('createdAt'));
   return onSnapshot(q, (snapshot) => {
-    const messages = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const messages: Message[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Message));
     callback(messages);
   });
 };
 
-export const updateMessage = async (chatId: string, messageId: string, newContent: any) => {
+export const updateMessage = async (chatId: string, messageId: string, newContent: Partial<Message>) => {
   await updateDoc(doc(db, 'chats', chatId, 'messages', messageId), {
     ...newContent,
     editedAt: serverTimestamp(),
@@ -112,7 +154,7 @@ export const removeGroupMember = async (chatId: string, uid: string) => {
   const chatRef = doc(db, 'chats', chatId);
   const chatSnap = await getDoc(chatRef);
   if (chatSnap.exists()) {
-    const data = chatSnap.data();
+    const data = chatSnap.data() as Chat;
     await updateDoc(chatRef, {
       members: data.members.filter((m: string) => m !== uid),
     });
@@ -130,7 +172,7 @@ export const updateGroupInfo = async (chatId: string, groupName: string, groupIm
   });
 };
 
-export const createCall = async (callerId, calleeId, offer) => {
+export const createCall = async (callerId: string, calleeId: string, offer: unknown) => {
   const callRef = await addDoc(collection(db, 'calls'), {
     callerId,
     calleeId,
@@ -141,22 +183,22 @@ export const createCall = async (callerId, calleeId, offer) => {
   return callRef.id;
 };
 
-export const answerCall = async (callId, answer) => {
+export const answerCall = async (callId: string, answer: unknown) => {
   await updateDoc(doc(db, 'calls', callId), {
     answer,
     status: 'in-progress',
   });
 };
 
-export const endCall = async (callId) => {
+export const endCall = async (callId: string) => {
   await updateDoc(doc(db, 'calls', callId), {
     status: 'ended',
   });
 };
 
-export const onCallUpdate = (callId, callback) => {
+export const onCallUpdate = (callId: string, callback: (data: Record<string, unknown> | null) => void) => {
   return onSnapshot(doc(db, 'calls', callId), (docSnap) => {
-    callback(docSnap.exists() ? docSnap.data() : null);
+    callback(docSnap.exists() ? docSnap.data() as Record<string, unknown> : null);
   });
 };
 
@@ -179,7 +221,7 @@ export const cleanUpExpiredGroups = async () => {
   }
 };
 
-export const updateChatSettings = async (chatId, settings) => {
+export const updateChatSettings = async (chatId: string, settings: Partial<Chat>) => {
   await updateDoc(doc(db, 'chats', chatId), settings);
 };
 
@@ -201,7 +243,7 @@ export const cleanUpDisappearingMessages = async () => {
 };
 
 // Upload a status (image/video/text)
-export const uploadStatus = async (user, file, text = '') => {
+export const uploadStatus = async (user: User, file: File | null, text = '') => {
   let mediaUrl = '';
   if (file) {
     const storage = getStorage();

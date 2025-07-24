@@ -1,9 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import Avatar from '../../components/Avatar';
 import { fetchStatuses } from '../../firebase/firestoreHelpers';
+import Image from 'next/image';
+
+interface Status {
+  id: string;
+  displayName: string;
+  photoURL: string;
+  createdAt?: { toDate?: () => Date };
+  mediaUrl?: string;
+  type?: string;
+  text?: string;
+}
 
 export default function ViewStatus() {
-  const [statuses, setStatuses] = useState<any[]>([]);
+  const [statuses, setStatuses] = useState<Status[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadStatuses = async () => {
@@ -34,7 +45,7 @@ export default function ViewStatus() {
                   <span className="text-xs text-gray-400">{status.createdAt?.toDate ? status.createdAt.toDate().toLocaleString() : ''}</span>
                 </div>
                 {status.mediaUrl && status.type?.startsWith('image') && (
-                  <img src={status.mediaUrl} alt="status" className="w-full max-h-48 object-cover rounded my-2" />
+                  <Image src={status.mediaUrl} alt="status" width={400} height={192} className="w-full max-h-48 object-cover rounded my-2" />
                 )}
                 {status.mediaUrl && status.type?.startsWith('video') && (
                   <video src={status.mediaUrl} controls className="w-full max-h-48 rounded my-2" />
