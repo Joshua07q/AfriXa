@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 body {
   @apply bg-gradient-to-br via-[#1a2a1a] to-[#222] min-h-screen text-gray-100 font-sans;
