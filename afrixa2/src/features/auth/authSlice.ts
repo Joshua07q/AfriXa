@@ -45,8 +45,11 @@ export const signUp = createAsyncThunk(
         await firebaseUpdateProfile(auth.currentUser, { displayName });
       }
       return serializeUser(userCredential.user);
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unknown error occurred');
     }
   }
 );
@@ -60,8 +63,11 @@ export const signIn = createAsyncThunk(
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       return serializeUser(userCredential.user);
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unknown error occurred');
     }
   }
 );
@@ -70,8 +76,11 @@ export const signOut = createAsyncThunk('auth/signOut', async (_, { rejectWithVa
   try {
     await firebaseSignOut(auth);
     return null;
-  } catch (error: any) {
-    return rejectWithValue(error.message);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      return rejectWithValue(error.message);
+    }
+    return rejectWithValue('An unknown error occurred');
   }
 });
 

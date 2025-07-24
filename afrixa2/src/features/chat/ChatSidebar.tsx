@@ -10,10 +10,22 @@ import EmptyState from '../../components/EmptyState';
 import Avatar from '../../components/Avatar';
 import { useRouter, usePathname } from 'next/navigation';
 import { FiMessageCircle, FiUser, FiSettings, FiBook, FiPlus, FiHelpCircle } from 'react-icons/fi';
+import type { User as ChatUser } from '../../firebase/firestoreHelpers';
+import type { Timestamp } from 'firebase/firestore';
+
+// Extend Chat type to include membersData
+interface ChatWithMembersData extends Omit<import('../../firebase/firestoreHelpers').Chat, 'membersData'> {
+  membersData?: ChatUser[];
+}
 
 export default function ChatSidebar() {
   const dispatch = useAppDispatch();
-  const { chats, currentChat, loading, error } = useAppSelector((state) => state.chat);
+  const { chats, currentChat, loading, error } = useAppSelector((state) => state.chat) as {
+    chats: ChatWithMembersData[];
+    currentChat: ChatWithMembersData | null;
+    loading: boolean;
+    error: string | null;
+  };
   const { user } = useAppSelector((state) => state.auth);
   const [modalOpen, setModalOpen] = useState(false);
   const router = useRouter();
@@ -76,18 +88,20 @@ export default function ChatSidebar() {
               }}
             >
               <Avatar
-                src={chat.isGroup ? chat.groupImage : (chat.membersData?.find((m: any) => m.uid !== user?.uid)?.photoURL)}
-                name={chat.isGroup ? chat.groupName : chat.membersData?.filter((m: any) => m.uid !== user?.uid).map((m: any) => m.displayName).join(', ')}
+                src={chat.isGroup ? chat.groupImage : (chat.membersData?.find((m: ChatUser) => m.uid !== user?.uid)?.photoURL)}
+                name={chat.isGroup ? chat.groupName : chat.membersData?.filter((m: ChatUser) => m.uid !== user?.uid).map((m: ChatUser) => m.displayName).join(', ')}
                 size={40}
               />
               <div className="flex-1">
                 <div className="font-semibold">
-                  {chat.isGroup ? chat.groupName : chat.membersData?.filter((m: any) => m.uid !== user?.uid).map((m: any) => m.displayName).join(', ')}
+                  {chat.isGroup ? chat.groupName : chat.membersData?.filter((m: ChatUser) => m.uid !== user?.uid).map((m: ChatUser) => m.displayName).join(', ')}
                 </div>
                 <div className="text-xs text-gray-500 truncate">{chat.lastMessage}</div>
               </div>
               <div className="text-xs text-gray-400 min-w-[60px] text-right">
-                {chat.lastMessageAt?.seconds ? formatDistanceToNow(new Date(chat.lastMessageAt.seconds * 1000), { addSuffix: true }) : ''}
+                {chat.lastMessageAt && isTimestamp(chat.lastMessageAt)
+                  ? formatDistanceToNow(new Date(chat.lastMessageAt.seconds * 1000), { addSuffix: true })
+                  : ''}
               </div>
             </li>
           );
@@ -96,4 +110,9 @@ export default function ChatSidebar() {
       <NewChatModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </aside>
   );
+}
+
+// Type guard for Firestore Timestamp
+function isTimestamp(obj: unknown): obj is Timestamp {
+  return !!obj && typeof obj === 'object' && 'seconds' in obj && typeof (obj as { seconds: number }).seconds === 'number';
 } 

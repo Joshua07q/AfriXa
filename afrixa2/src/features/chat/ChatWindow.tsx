@@ -1,11 +1,25 @@
 "use client";
 import React, { useEffect, useState, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { loadMessages, sendChatMessage, editChatMessage, deleteChatMessage, markMessageSeenThunk, addOptimisticMessage, markMessageDeleting, removeOptimisticMessage, updateOptimisticMessage } from './chatSlice';
+import { loadMessages, sendChatMessage, editChatMessage, deleteChatMessage, markMessageSeenThunk, addOptimisticMessage, markMessageDeleting, removeOptimisticMessage } from './chatSlice';
 import ChatWindowHeader from './ChatWindowHeader';
 import Spinner from '../../components/Spinner';
 import ErrorBanner from '../../components/ErrorBanner';
 import EmptyState from '../../components/EmptyState';
+import Image from 'next/image';
+import type { Message } from '../../firebase/firestoreHelpers';
+
+// Type for optimistic messages
+interface OptimisticMessage extends Omit<Message, 'createdAt' | 'replyTo'> {
+  senderName: string;
+  senderPhoto: string;
+  replyTo?: string;
+  createdAt?: undefined;
+  imageFile?: File | null;
+}
+
+// Type for all messages in this component
+type ChatMsg = Message | OptimisticMessage;
 
 export default function ChatWindow() {
   const dispatch = useAppDispatch();
@@ -13,7 +27,7 @@ export default function ChatWindow() {
   const { user } = useAppSelector((state) => state.auth);
   const [text, setText] = useState('');
   const [image, setImage] = useState<File | null>(null);
-  const [replyTo, setReplyTo] = useState<any>(null);
+  const [replyTo, setReplyTo] = useState<ChatMsg | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [editingMsgId, setEditingMsgId] = useState<string | null>(null);
@@ -27,10 +41,10 @@ export default function ChatWindow() {
   }, [currentChat, dispatch]);
 
   useEffect(() => {
-    if (messages && user) {
+    if (messages && user && currentChat) {
       messages.forEach((msg) => {
-        if (!msg.seenBy?.some((s: any) => s.uid === user.uid)) {
-          dispatch(markMessageSeenThunk({ chatId: currentChat.id, messageId: msg.id, uid: user.uid }));
+        if (!msg.seenBy?.some((s) => s.uid === user.uid)) {
+          dispatch(markMessageSeenThunk({ chatId: currentChat.id ?? '', messageId: msg.id ?? '', uid: user.uid }));
         }
       });
     }
@@ -43,24 +57,24 @@ export default function ChatWindow() {
   const handleSend = () => {
     if ((text.trim() || image) && currentChat && user) {
       const tempId = 'temp-' + Math.random().toString(36).substr(2, 9);
-      const optimisticMsg = {
+      const optimisticMsg: OptimisticMessage = {
         id: tempId,
         text,
-        imageFile: image,
+        imageFile: image ?? undefined,
         sender: user.uid,
-        senderName: user.displayName,
-        senderPhoto: user.photoURL,
-        replyTo: replyTo ? replyTo.id : null,
-        createdAt: new Date().toISOString(),
+        senderName: user.displayName ?? '',
+        senderPhoto: user.photoURL ?? '',
+        replyTo: replyTo ? replyTo.id ?? '' : undefined,
+        createdAt: undefined,
         pending: true,
       };
       dispatch(addOptimisticMessage(optimisticMsg));
       dispatch(
         sendChatMessage({
-          chatId: currentChat.id,
-          message: optimisticMsg,
+          chatId: currentChat.id ?? '',
+          message: optimisticMsg as Message & { imageFile?: File },
         })
-      ).unwrap().catch((err) => {
+      ).unwrap().catch(() => {
         setOptimisticError('Failed to send message');
         dispatch(removeOptimisticMessage(tempId));
       });
@@ -70,20 +84,22 @@ export default function ChatWindow() {
     }
   };
 
-  const handleReply = (msg: any) => setReplyTo(msg);
-  const handleEdit = (msg: any) => {
-    setEditingMsgId(msg.id);
-    setEditText(msg.text);
+  const handleReply = (msg: ChatMsg) => setReplyTo(msg);
+  const handleEdit = (msg: ChatMsg) => {
+    setEditingMsgId(msg.id ?? '');
+    setEditText(msg.text ?? '');
   };
-  const handleEditSave = (msg: any) => {
-    dispatch(editChatMessage({ chatId: currentChat.id, messageId: msg.id, newContent: { text: editText } }));
+  const handleEditSave = (msg: ChatMsg) => {
+    if (!currentChat) return;
+    dispatch(editChatMessage({ chatId: currentChat.id ?? '', messageId: msg.id ?? '', newContent: { text: editText } }));
     setEditingMsgId(null);
     setEditText('');
   };
-  const handleDelete = (msg: any) => {
+  const handleDelete = (msg: ChatMsg) => {
+    if (!currentChat) return;
     if (window.confirm('Delete this message?')) {
-      dispatch(markMessageDeleting(msg.id));
-      dispatch(deleteChatMessage({ chatId: currentChat.id, messageId: msg.id }))
+      dispatch(markMessageDeleting(msg.id ?? ''));
+      dispatch(deleteChatMessage({ chatId: currentChat.id ?? '', messageId: msg.id ?? '' }))
         .unwrap()
         .catch(() => {
           setOptimisticError('Failed to delete message');
@@ -101,18 +117,18 @@ export default function ChatWindow() {
         {error && <ErrorBanner message={error} />}
         {optimisticError && <ErrorBanner message={optimisticError} onClose={() => setOptimisticError(null)} />}
         {!loading && messages.length === 0 && <EmptyState message="No messages yet" icon={<span>💬</span>} />}
-        {messages.map((msg) => (
+        {messages.map((msg: ChatMsg) => (
           <div
             key={msg.id}
             className={`mb-2 ${msg.sender === user?.uid ? 'text-right' : 'text-left'} ${msg.deleting ? 'opacity-50 transition-opacity duration-500' : ''}`}
           >
             <div className="inline-block bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10 p-6 mb-4 relative max-w-xl">
-              <span className="font-semibold text-accent">{msg.senderName}:</span>
+              <span className="font-semibold text-accent">{'senderName' in msg ? msg.senderName : user?.displayName}:</span>
               {msg.replyTo && (
                 <div className="text-xs text-accent border-l-2 pl-2 my-1">Replying to message {msg.replyTo}</div>
               )}
               {msg.imageUrl && (
-                <img src={msg.imageUrl} alt="sent" className="max-w-xs max-h-40 my-2 rounded" />
+                <Image src={msg.imageUrl} alt="sent" width={320} height={160} className="max-w-xs max-h-40 my-2 rounded" />
               )}
               {msg.pending && <Spinner label="Sending..." size={16} />}
               {editingMsgId === msg.id ? (
@@ -132,13 +148,13 @@ export default function ChatWindow() {
               {msg.editedAt && <span className="text-xs text-gray-400 ml-2">(edited)</span>}
               <div className="flex gap-2 text-xs text-gray-400 mt-1">
                 <span>
-                  {msg.seenBy?.length > 1
+                  {msg.seenBy && msg.seenBy.length > 1
                     ? `Seen by ${msg.seenBy.length} users`
-                    : msg.seenBy?.length === 1
+                    : msg.seenBy && msg.seenBy.length === 1
                     ? 'Seen'
                     : 'Delivered'}
                 </span>
-                <button className="focus:outline focus:ring text-accent" onClick={() => handleReply(msg)} aria-label={`Reply to message from ${msg.senderName}`}>Reply</button>
+                <button className="focus:outline focus:ring text-accent" onClick={() => handleReply(msg)} aria-label={`Reply to message from ${'senderName' in msg ? msg.senderName : user?.displayName}`}>Reply</button>
                 {msg.sender === user?.uid && !msg.pending && !msg.deleting && <button className="focus:outline focus:ring text-accent" onClick={() => handleEdit(msg)} aria-label="Edit message">Edit</button>}
                 {msg.sender === user?.uid && !msg.pending && !msg.deleting && <button className="focus:outline focus:ring text-red-400" onClick={() => handleDelete(msg)} aria-label="Delete message">Delete</button>}
               </div>
@@ -149,7 +165,7 @@ export default function ChatWindow() {
       </div>
       {replyTo && (
         <div className="bg-accent/20 p-2 rounded mb-2 flex items-center gap-2 bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10 p-6 mb-4">
-          <span className="font-semibold text-accent">Replying to {replyTo.senderName}:</span>
+          <span className="font-semibold text-accent">Replying to {'senderName' in replyTo ? replyTo.senderName : user?.displayName}:</span>
           <span className="truncate">{replyTo.text}</span>
           <button className="ml-2 text-gray-400 focus:outline focus:ring" onClick={() => setReplyTo(null)}>Cancel</button>
         </div>
@@ -171,7 +187,7 @@ export default function ChatWindow() {
         <input
           type="text"
           className="flex-1 border rounded p-2 bg-black/40 text-gray-100"
-          placeholder={replyTo ? `Replying to ${replyTo.senderName}` : "Type a message..."}
+          placeholder={replyTo ? `Replying to ${'senderName' in replyTo ? replyTo.senderName : user?.displayName}` : "Type a message..."}
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
