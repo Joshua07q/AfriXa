@@ -1,17 +1,15 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
   @apply bg-gradient-to-br via-[#1a2a1a] to-[#222] min-h-screen text-gray-100 font-sans;
   background-image:
-    url('/african-pattern.svg'), /* Add your SVG pattern to public/ */
+    url('/african-pattern.svg'),
     linear-gradient(135deg, rgba(34,34,34,0.95) 0%, rgba(26,42,26,0.95) 100%);
   background-blend-mode: overlay;
   background-size: cover, 400px;
   background-repeat: repeat, no-repeat;
-}
-
-.glass {
-  @apply bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10;
 }
 
 ::-webkit-scrollbar {
@@ -27,19 +25,6 @@ input, textarea, select {
   @apply bg-black/40 border border-white/10 text-gray-100 placeholder-gray-400 focus:ring-green-500 focus:border-green-500;
 }
 
-button, .btn {
+button {
   @apply transition font-semibold focus:outline focus:ring focus:ring-green-500;
-}
-
-/* Accent colors for African/futuristic feel */
-.text-accent {
-  color: #ffd700;
-}
-.bg-accent {
-  background: linear-gradient(90deg, #0f5132 0%, #ffd700 100%);
-}
-
-/* Example for glassy card */
-.card-glass {
-  @apply glass p-6 mb-4;
 }

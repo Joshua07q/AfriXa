@@ -26,7 +26,7 @@ export default function ViewStatus() {
         <div className="space-y-6">
           {statuses.length === 0 && <div className="text-gray-400">No statuses yet.</div>}
           {statuses.map((status) => (
-            <div key={status.id} className="card-glass flex items-center gap-4 p-4">
+            <div key={status.id} className="bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10 p-6 mb-4 flex items-center gap-4">
               <Avatar name={status.displayName} src={status.photoURL} size={48} />
               <div className="flex-1">
                 <div className="flex items-center gap-2">

@@ -106,7 +106,7 @@ export default function ChatWindow() {
             key={msg.id}
             className={`mb-2 ${msg.sender === user?.uid ? 'text-right' : 'text-left'} ${msg.deleting ? 'opacity-50 transition-opacity duration-500' : ''}`}
           >
-            <div className="inline-block card-glass relative max-w-xl">
+            <div className="inline-block bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10 p-6 mb-4 relative max-w-xl">
               <span className="font-semibold text-accent">{msg.senderName}:</span>
               {msg.replyTo && (
                 <div className="text-xs text-accent border-l-2 pl-2 my-1">Replying to message {msg.replyTo}</div>
@@ -148,13 +148,13 @@ export default function ChatWindow() {
         <div ref={messagesEndRef} />
       </div>
       {replyTo && (
-        <div className="bg-accent/20 p-2 rounded mb-2 flex items-center gap-2 card-glass">
+        <div className="bg-accent/20 p-2 rounded mb-2 flex items-center gap-2 bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10 p-6 mb-4">
           <span className="font-semibold text-accent">Replying to {replyTo.senderName}:</span>
           <span className="truncate">{replyTo.text}</span>
           <button className="ml-2 text-gray-400 focus:outline focus:ring" onClick={() => setReplyTo(null)}>Cancel</button>
         </div>
       )}
-      <footer className="p-4 bg-black/40 border-t border-white/10 flex gap-2 items-center card-glass">
+      <footer className="p-4 bg-black/40 border-t border-white/10 flex gap-2 items-center bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10 p-6 mb-4">
         <input
           type="file"
           accept="image/*"

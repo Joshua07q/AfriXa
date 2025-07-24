@@ -26,7 +26,7 @@ export default function ChatSidebar() {
   }, [user, dispatch]);
 
   return (
-    <aside className="w-72 h-screen p-4 overflow-y-auto glass border-r border-white/10" aria-label="Chat sidebar" role="complementary">
+    <aside className="w-72 h-screen p-4 overflow-y-auto bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10" aria-label="Chat sidebar" role="complementary">
       <h2 className="text-xl font-bold mb-4 text-accent flex items-center gap-2"><FiMessageCircle className="inline-block text-accent" /> Chats</h2>
       <button className="mb-4 bg-accent text-black p-2 rounded w-full focus:outline focus:ring font-bold flex items-center gap-2 justify-center shadow" onClick={() => setModalOpen(true)} aria-label="Start a new chat or group"><FiPlus /> New Chat / Group</button>
       <nav className="flex flex-col gap-2 mb-4">
