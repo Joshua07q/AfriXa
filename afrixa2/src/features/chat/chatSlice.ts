@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getUserChats as getUserChatsAPI, getMessages, sendMessage, updateMessage, deleteMessage, markMessageSeen, removeGroupMember, leaveGroup, updateGroupInfo, updateChatSettings, getUser } from '../../firebase/firestoreHelpers';
+import { getUserChats as getUserChatsAPI, getMessages, sendMessage, updateMessage, deleteMessage, markMessageSeen, removeGroupMember, leaveGroup, updateGroupInfo, updateChatSettings, getUser, Chat, Message } from '../../firebase/firestoreHelpers';
 
 interface ChatState {
-  chats: any[];
-  currentChat: any | null;
-  messages: any[];
+  chats: Chat[];
+  currentChat: Chat | null;
+  messages: Message[];
   loading: boolean;
   error: string | null;
 }
@@ -18,9 +18,8 @@ const initialState: ChatState = {
 };
 
 export const loadChats = createAsyncThunk('chat/loadChats', async (uid: string, { rejectWithValue }) => {
-  return new Promise<any[]>(async (resolve) => {
+  return new Promise<Chat[]>(async (resolve) => {
     getUserChatsAPI(uid, async (chats) => {
-      // For each chat, fetch user data for all members except the current user
       const enhancedChats = await Promise.all(
         chats.map(async (chat) => {
           const otherMembers = (chat.members || []).filter((m: string) => m !== uid);
@@ -35,10 +34,10 @@ export const loadChats = createAsyncThunk('chat/loadChats', async (uid: string, 
   });
 });
 
-export const selectChat = createAsyncThunk('chat/selectChat', async (chat: any) => chat);
+export const selectChat = createAsyncThunk('chat/selectChat', async (chat: Chat) => chat);
 
 export const loadMessages = createAsyncThunk('chat/loadMessages', async (chatId: string, { rejectWithValue }) => {
-  return new Promise<any[]>((resolve) => {
+  return new Promise<Message[]>((resolve) => {
     getMessages(chatId, (messages) => {
       resolve(messages);
     });
@@ -47,7 +46,7 @@ export const loadMessages = createAsyncThunk('chat/loadMessages', async (chatId:
 
 export const sendChatMessage = createAsyncThunk(
   'chat/sendMessage',
-  async ({ chatId, message }: { chatId: string; message: any }, { rejectWithValue }) => {
+  async ({ chatId, message }: { chatId: string; message: Message & { imageFile?: File } }, { rejectWithValue }) => {
     try {
       await sendMessage(chatId, message);
       return true;
@@ -59,7 +58,7 @@ export const sendChatMessage = createAsyncThunk(
 
 export const editChatMessage = createAsyncThunk(
   'chat/editMessage',
-  async ({ chatId, messageId, newContent }: { chatId: string; messageId: string; newContent: any }, { rejectWithValue }) => {
+  async ({ chatId, messageId, newContent }: { chatId: string; messageId: string; newContent: Partial<Message> }, { rejectWithValue }) => {
     try {
       await updateMessage(chatId, messageId, newContent);
       return { messageId, newContent };
@@ -131,7 +130,7 @@ export const updateGroupInfoThunk = createAsyncThunk(
 
 export const updateChatSettingsThunk = createAsyncThunk(
   'chat/updateChatSettings',
-  async ({ chatId, settings }: { chatId: string; settings: any }, { rejectWithValue }) => {
+  async ({ chatId, settings }: { chatId: string; settings: Partial<Chat> }, { rejectWithValue }) => {
     try {
       await updateChatSettings(chatId, settings);
       return { chatId, settings };
@@ -140,10 +139,6 @@ export const updateChatSettingsThunk = createAsyncThunk(
     }
   }
 );
-
-function generateTempId() {
-  return 'temp-' + Math.random().toString(36).substr(2, 9);
-}
 
 const chatSlice = createSlice({
   name: 'chat',
@@ -201,10 +196,10 @@ const chatSlice = createSlice({
           msg.id === messageId ? { ...msg, ...newContent, editedAt: new Date() } : msg
         );
       })
-      .addCase(sendChatMessage.pending, (state, action) => {
+      .addCase(sendChatMessage.pending, () => {
         // handled in UI for now
       })
-      .addCase(sendChatMessage.fulfilled, (state, action) => {
+      .addCase(sendChatMessage.fulfilled, (state) => {
         // Remove pending messages on success (UI will reload messages)
         state.messages = state.messages.filter((m) => !m.pending);
       })
@@ -213,7 +208,7 @@ const chatSlice = createSlice({
         state.messages = state.messages.filter((m) => !m.pending);
         state.error = action.payload as string;
       })
-      .addCase(deleteChatMessage.pending, (state, action) => {
+      .addCase(deleteChatMessage.pending, () => {
         // handled in UI for now
       })
       .addCase(deleteChatMessage.fulfilled, (state, action) => {

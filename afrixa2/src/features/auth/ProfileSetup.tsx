@@ -9,6 +9,7 @@ import afrixaLogo from '../../assets/Asset 1.png';
 import asset3 from '../../assets/Asset 3.png';
 import { useRouter } from 'next/navigation';
 import TutorialModal from '../../components/TutorialModal';
+import Image from 'next/image';
 
 export default function ProfileSetup() {
   const { user } = useAppSelector((state) => state.auth);
@@ -69,9 +70,22 @@ export default function ProfileSetup() {
 
   return (
     <div className="relative">
-      <img src={asset3.src} alt="Brand asset 3" className="absolute bottom-0 left-0 w-24 h-24 opacity-10 pointer-events-none select-none" aria-hidden="true" />
+      <Image
+        src={asset3.src}
+        alt="Brand asset 3"
+        className="absolute bottom-0 left-0 w-24 h-24 opacity-10 pointer-events-none select-none"
+        aria-hidden="true"
+        width={96}
+        height={96}
+      />
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-sm mx-auto mt-10 relative z-10">
-        <img src={afrixaLogo.src} alt="AfriXa Logo" className="w-20 h-20 mx-auto mb-4" />
+        <Image
+          src={afrixaLogo.src}
+          alt="AfriXa Logo"
+          className="w-20 h-20 mx-auto mb-4"
+          width={80}
+          height={80}
+        />
         <h2 className="text-2xl font-bold mb-2">Set up your profile</h2>
         <div className="flex flex-col items-center gap-2">
           <input
@@ -86,7 +100,13 @@ export default function ProfileSetup() {
             onClick={() => fileInputRef.current?.click()}
           >
             {photoURL ? (
-              <img src={photoURL} alt="Profile" className="w-full h-full object-cover" />
+              <Image
+                src={photoURL}
+                alt="Profile"
+                className="w-full h-full object-cover"
+                width={96}
+                height={96}
+              />
             ) : (
               <span>Upload</span>
             )}
@@ -114,7 +134,7 @@ export default function ProfileSetup() {
       </form>
       {showTutorial && <TutorialModal onClose={() => {
         localStorage.setItem('afrixa_show_app', '1');
-        router.push('/app/profile');
+        router.push('/app/pr');
       }} />}
     </div>
   );

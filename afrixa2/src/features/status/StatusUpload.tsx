@@ -2,6 +2,8 @@
 import React, { useRef, useState } from 'react';
 import { uploadStatus } from '../../firebase/firestoreHelpers';
 import { useAppSelector } from '../../store/hooks';
+import Image from 'next/image';
+import type { User } from '../../firebase/firestoreHelpers';
 
 export default function StatusUpload({ onStatusUploaded }: { onStatusUploaded?: () => void }) {
   const [file, setFile] = useState<File | null>(null);
@@ -11,6 +13,16 @@ export default function StatusUpload({ onStatusUploaded }: { onStatusUploaded?: 
   const [text, setText] = useState('');
   const videoRef = useRef<HTMLVideoElement>(null);
   const { user } = useAppSelector((state) => state.auth);
+
+  if (!user || !user.displayName || !user.photoURL || !user.email) {
+    return null;
+  }
+  const safeUser: User = {
+    uid: user.uid,
+    displayName: user.displayName,
+    photoURL: user.photoURL,
+    email: user.email,
+  };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] || null;
@@ -44,11 +56,11 @@ export default function StatusUpload({ onStatusUploaded }: { onStatusUploaded?: 
     setUploading(true);
     setProgress(0);
     for (let i = 0; i < segments.length; i++) {
-      await uploadStatus(user, segments[i], text);
+      await uploadStatus(safeUser, segments[i], text);
       setProgress(((i + 1) / segments.length) * 100);
     }
     if (!file && text) {
-      await uploadStatus(user, null, text);
+      await uploadStatus(safeUser, null, text);
     }
     setUploading(false);
     alert('Status uploaded!');
@@ -74,7 +86,7 @@ export default function StatusUpload({ onStatusUploaded }: { onStatusUploaded?: 
           {file.type.startsWith('video/') ? (
             <video ref={videoRef} src={URL.createObjectURL(file)} controls className="w-full max-h-48" />
           ) : (
-            <img src={URL.createObjectURL(file)} alt="status" className="w-full max-h-48 object-cover" />
+            <Image src={URL.createObjectURL(file)} alt="status" width={400} height={192} className="w-full max-h-48 object-cover" />
           )}
         </div>
       )}
