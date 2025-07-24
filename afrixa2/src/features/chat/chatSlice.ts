@@ -17,7 +17,7 @@ const initialState: ChatState = {
   error: null,
 };
 
-export const loadChats = createAsyncThunk('chat/loadChats', async (uid: string, { rejectWithValue }) => {
+export const loadChats = createAsyncThunk('chat/loadChats', async (uid: string) => {
   return new Promise<Chat[]>(async (resolve) => {
     getUserChatsAPI(uid, async (chats) => {
       const enhancedChats = await Promise.all(
@@ -36,7 +36,7 @@ export const loadChats = createAsyncThunk('chat/loadChats', async (uid: string, 
 
 export const selectChat = createAsyncThunk('chat/selectChat', async (chat: Chat) => chat);
 
-export const loadMessages = createAsyncThunk('chat/loadMessages', async (chatId: string, { rejectWithValue }) => {
+export const loadMessages = createAsyncThunk('chat/loadMessages', async (chatId: string) => {
   return new Promise<Message[]>((resolve) => {
     getMessages(chatId, (messages) => {
       resolve(messages);
@@ -50,8 +50,11 @@ export const sendChatMessage = createAsyncThunk(
     try {
       await sendMessage(chatId, message);
       return true;
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unexpected error occurred');
     }
   }
 );
@@ -62,8 +65,11 @@ export const editChatMessage = createAsyncThunk(
     try {
       await updateMessage(chatId, messageId, newContent);
       return { messageId, newContent };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unexpected error occurred');
     }
   }
 );
@@ -74,8 +80,11 @@ export const deleteChatMessage = createAsyncThunk(
     try {
       await deleteMessage(chatId, messageId);
       return messageId;
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unexpected error occurred');
     }
   }
 );
@@ -86,8 +95,11 @@ export const markMessageSeenThunk = createAsyncThunk(
     try {
       await markMessageSeen(chatId, messageId, uid);
       return { messageId, uid };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unexpected error occurred');
     }
   }
 );
@@ -98,8 +110,11 @@ export const removeGroupMemberThunk = createAsyncThunk(
     try {
       await removeGroupMember(chatId, uid);
       return { chatId, uid };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unexpected error occurred');
     }
   }
 );
@@ -110,8 +125,11 @@ export const leaveGroupThunk = createAsyncThunk(
     try {
       await leaveGroup(chatId, uid);
       return { chatId, uid };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unexpected error occurred');
     }
   }
 );
@@ -122,8 +140,11 @@ export const updateGroupInfoThunk = createAsyncThunk(
     try {
       await updateGroupInfo(chatId, groupName, groupImage);
       return { chatId, groupName, groupImage };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unexpected error occurred');
     }
   }
 );
@@ -134,8 +155,11 @@ export const updateChatSettingsThunk = createAsyncThunk(
     try {
       await updateChatSettings(chatId, settings);
       return { chatId, settings };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('An unexpected error occurred');
     }
   }
 );
