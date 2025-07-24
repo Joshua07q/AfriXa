@@ -121,12 +121,12 @@ export default function ChatWindow() {
         {messages.map((msg: ChatMsg) => (
           <div
             key={msg.id}
-            className={`mb-2 ${msg.senderId === user?.uid ? 'text-right' : 'text-left'} ${msg.deleting ? 'opacity-50 transition-opacity duration-500' : ''}`}
+            className={`flex mb-4 ${msg.senderId === user?.uid ? 'justify-end' : 'justify-start'} ${msg.deleting ? 'opacity-50 transition-opacity duration-500' : ''}`}
           >
-            <div className="inline-block bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10 p-6 mb-4 relative max-w-xl">
-              <span className="font-semibold text-accent">{'senderName' in msg ? msg.senderName : user?.displayName}:</span>
+            <div className={`rounded-lg px-4 py-2 max-w-xl ${msg.senderId === user?.uid ? 'bg-gradient-to-br from-green-500 to-green-700 text-white' : 'bg-gray-200 text-gray-800'}`}>
+              <span className="font-semibold block">{('senderName' in msg) ? msg.senderName : user?.displayName}:</span>
               {msg.replyTo && (
-                <div className="text-xs text-accent border-l-2 pl-2 my-1">Replying to message {msg.replyTo}</div>
+                <div className="text-xs border-l-2 pl-2 my-1">Replying to message {msg.replyTo}</div>
               )}
               {msg.imageUrl && (
                 <Image src={msg.imageUrl} alt="sent" width={320} height={160} className="max-w-xs max-h-40 my-2 rounded" />
@@ -144,20 +144,20 @@ export default function ChatWindow() {
                   <button className="ml-2 text-gray-400 focus:outline focus:ring" onClick={() => setEditingMsgId(null)} aria-label="Cancel edit">Cancel</button>
                 </>
               ) : (
-                <span> {msg.content}</span>
+                <p className="text-lg">{msg.content}</p>
               )}
-              {msg.editedAt && <span className="text-xs text-gray-400 ml-2">(edited)</span>}
-              <div className="flex gap-2 text-xs text-gray-400 mt-1">
-                <span>
+              {msg.editedAt && <span className="text-xs text-gray-500 ml-2">(edited)</span>}
+              <div className="flex gap-4 text-xs mt-1">
+                <span className={msg.senderId === user?.uid ? 'text-gray-300' : 'text-gray-500'}>
                   {msg.seenBy && msg.seenBy.length > 1
                     ? `Seen by ${msg.seenBy.length} users`
                     : msg.seenBy && msg.seenBy.length === 1
                     ? 'Seen'
                     : 'Delivered'}
                 </span>
-                <button className="focus:outline focus:ring text-accent" onClick={() => handleReply(msg)} aria-label={`Reply to message from ${'senderName' in msg ? msg.senderName : user?.displayName}`}>Reply</button>
-                {msg.senderId === user?.uid && !msg.pending && !msg.deleting && <button className="focus:outline focus:ring text-accent" onClick={() => handleEdit(msg)} aria-label="Edit message">Edit</button>}
-                {msg.senderId === user?.uid && !msg.pending && !msg.deleting && <button className="focus:outline focus:ring text-red-400" onClick={() => handleDelete(msg)} aria-label="Delete message">Delete</button>}
+                <button className="focus:outline focus:ring font-semibold" onClick={() => handleReply(msg)} aria-label={`Reply to message from ${'senderName' in msg ? msg.senderName : user?.displayName}`}>Reply</button>
+                {msg.senderId === user?.uid && !msg.pending && !msg.deleting && <button className="focus:outline focus:ring font-semibold" onClick={() => handleEdit(msg)} aria-label="Edit message">Edit</button>}
+                {msg.senderId === user?.uid && !msg.pending && !msg.deleting && <button className="focus:outline focus:ring font-semibold text-red-400" onClick={() => handleDelete(msg)} aria-label="Delete message">Delete</button>}
               </div>
             </div>
           </div>
