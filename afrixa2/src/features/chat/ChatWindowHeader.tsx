@@ -1,5 +1,6 @@
 "use client";
 import { useAppSelector } from '../../store/hooks';
+import { User } from '../../firebase/firestoreHelpers';
 import GroupInfoModal from './GroupInfoModal';
 import { useState } from 'react';
 import CallModal from './CallModal';
@@ -19,12 +20,12 @@ export default function ChatWindowHeader() {
   const isGroup = currentChat.isGroup;
   const avatarSrc = isGroup
     ? currentChat.groupImage
-    : currentChat.membersData?.find((m: any) => m.uid !== user?.uid)?.photoURL;
+    : currentChat.membersData?.find((m: User) => m.uid !== user?.uid)?.photoURL;
   const avatarName = isGroup
     ? currentChat.groupName
-    : currentChat.membersData?.filter((m: any) => m.uid !== user?.uid).map((m: any) => m.displayName).join(', ');
+    : currentChat.membersData?.filter((m: User) => m.uid !== user?.uid).map((m: User) => m.displayName).join(', ');
   const members = isGroup
-    ? currentChat.membersData?.map((m: any) => m.displayName).join(', ')
+    ? currentChat.membersData?.map((m: User) => m.displayName).join(', ')
     : null;
 
   return (
@@ -57,7 +58,7 @@ export default function ChatWindowHeader() {
         <span className="ml-2 text-xs text-red-500">Disappearing: {currentChat.disappearingDuration / 1000 / 60} min</span>
       )}
       <GroupInfoModal open={modalOpen} onClose={() => setModalOpen(false)} />
-      <CallModal open={callModalOpen} type={callType} status={'ringing'} onAccept={() => {}} onDecline={() => setCallModalOpen(false)} onEnd={() => setCallModalOpen(false)} remoteUser={isGroup ? null : currentChat.membersData?.find((m: any) => m.uid !== user?.uid)} />
+      <CallModal open={callModalOpen} type={callType} status={'ringing'} onAccept={() => {}} onDecline={() => setCallModalOpen(false)} onEnd={() => setCallModalOpen(false)} remoteUser={isGroup ? null : currentChat.membersData?.find((m: User) => m.uid !== user?.uid)} />
     </header>
   );
 } 
