@@ -2,6 +2,7 @@
 import React from 'react';
 import afrixaLogo from '../assets/Asset 1.png';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 
 export default function TutorialModal({ onClose }: { onClose: () => void }) {
@@ -17,12 +18,12 @@ export default function TutorialModal({ onClose }: { onClose: () => void }) {
           ×
         </button>
         <div className="flex flex-col items-center">
-          <img src={afrixaLogo.src} alt="AfriXa Logo" className="w-16 h-16 mb-4" />
+          <Image src={afrixaLogo} alt="AfriXa Logo" width={64} height={64} className="w-16 h-16 mb-4" />
           <h2 className="text-2xl font-bold mb-2 text-green-700">Welcome to AfriXa!</h2>
-          <p className="text-gray-600 mb-6 text-center">Here's a quick tour of the main features to get you started:</p>
+          <p className="text-gray-600 mb-6 text-center">Here&apos;s a quick tour of the main features to get you started:</p>
           <ul className="text-left space-y-4 w-full max-w-md mx-auto">
             <li><span className="font-semibold text-green-700">💬 Real-time Chat:</span> Instantly message individuals or groups across Africa.</li>
-            <li><span className="font-semibold text-green-700">🖼️ Profile & Avatars:</span> Personalize your profile and see others' avatars and initials.</li>
+            <li><span className="font-semibold text-green-700">🖼️ Profile & Avatars:</span> Personalize your profile and see others&apos; avatars and initials.</li>
             <li><span className="font-semibold text-green-700">🔍 Search & Start Chats:</span> Find users and create new chats or groups easily.</li>
             <li><span className="font-semibold text-green-700">📱 Responsive Design:</span> Use AfriXa on mobile, tablet, or desktop with a beautiful, adaptive layout.</li>
             <li><span className="font-semibold text-green-700">🔔 Status & Notifications:</span> Stay updated with message status and group info.</li>

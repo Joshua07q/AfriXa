@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 function getInitials(name: string | undefined | null) {
   if (!name) return '?';
@@ -18,7 +19,7 @@ function stringToColor(str: string) {
 
 export default function Avatar({ src, name, size = 40, alt = 'avatar' }: { src?: string | null; name?: string | null; size?: number; alt?: string }) {
   if (src) {
-    return <img src={src} alt={alt} className="rounded-full object-cover" style={{ width: size, height: size }} />;
+    return <Image src={src} alt={alt} width={size} height={size} className="rounded-full object-cover" />;
   }
   const initials = getInitials(name);
   const bgColor = stringToColor(name || '?');
