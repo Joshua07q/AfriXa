@@ -1,26 +1,47 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  @apply bg-gradient-to-br from-black via-[#1a2a1a] to-[#222] min-h-screen text-gray-100 font-sans;
+  background-image:
+    url('/african-pattern.svg'), /* Add your SVG pattern to public/ */
+    linear-gradient(135deg, rgba(34,34,34,0.95) 0%, rgba(26,42,26,0.95) 100%);
+  background-blend-mode: overlay;
+  background-size: cover, 400px;
+  background-repeat: repeat, no-repeat;
+}
+
+.glass {
+  @apply bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #222c;
+  border-radius: 8px;
+}
+
+input, textarea, select {
+  @apply bg-black/40 border border-white/10 text-gray-100 placeholder-gray-400 focus:ring-green-500 focus:border-green-500;
+}
+
+button, .btn {
+  @apply transition font-semibold focus:outline focus:ring focus:ring-green-500;
+}
+
+/* Accent colors for African/futuristic feel */
+.text-accent {
+  color: #ffd700;
+}
+.bg-accent {
+  background: linear-gradient(90deg, #0f5132 0%, #ffd700 100%);
+}
+
+/* Example for glassy card */
+.card-glass {
+  @apply glass p-6 mb-4;
 }

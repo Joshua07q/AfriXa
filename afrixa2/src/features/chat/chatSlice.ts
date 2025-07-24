@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getUserChats, getMessages, sendMessage, updateMessage, deleteMessage, markMessageSeen, removeGroupMember, leaveGroup, updateGroupInfo, updateChatSettings } from '../../firebase/firestoreHelpers';
+import { getUserChats as getUserChatsAPI, getMessages, sendMessage, updateMessage, deleteMessage, markMessageSeen, removeGroupMember, leaveGroup, updateGroupInfo, updateChatSettings, getUser } from '../../firebase/firestoreHelpers';
 
 interface ChatState {
   chats: any[];
@@ -18,9 +18,19 @@ const initialState: ChatState = {
 };
 
 export const loadChats = createAsyncThunk('chat/loadChats', async (uid: string, { rejectWithValue }) => {
-  return new Promise<any[]>((resolve) => {
-    getUserChats(uid, (chats) => {
-      resolve(chats);
+  return new Promise<any[]>(async (resolve) => {
+    getUserChatsAPI(uid, async (chats) => {
+      // For each chat, fetch user data for all members except the current user
+      const enhancedChats = await Promise.all(
+        chats.map(async (chat) => {
+          const otherMembers = (chat.members || []).filter((m: string) => m !== uid);
+          const membersData = await Promise.all(
+            otherMembers.map(async (memberId: string) => await getUser(memberId))
+          );
+          return { ...chat, membersData };
+        })
+      );
+      resolve(enhancedChats);
     });
   });
 });

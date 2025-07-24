@@ -58,7 +58,7 @@ export default function ProfileSetup() {
         setShowTutorial(true);
         localStorage.setItem('afrixa_tutorial_shown', '1');
       } else {
-        router.push('/');
+        router.push('/app/chat');
       }
     } catch (err) {
       alert('Failed to update profile.');
@@ -114,7 +114,7 @@ export default function ProfileSetup() {
       </form>
       {showTutorial && <TutorialModal onClose={() => {
         localStorage.setItem('afrixa_show_app', '1');
-        router.push('/app');
+        router.push('/app/profile');
       }} />}
     </div>
   );

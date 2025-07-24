@@ -1,12 +1,16 @@
 "use client";
 import React, { useRef, useState } from 'react';
+import { uploadStatus } from '../../firebase/firestoreHelpers';
+import { useAppSelector } from '../../store/hooks';
 
-export default function StatusUpload() {
+export default function StatusUpload({ onStatusUploaded }: { onStatusUploaded?: () => void }) {
   const [file, setFile] = useState<File | null>(null);
   const [segments, setSegments] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [text, setText] = useState('');
   const videoRef = useRef<HTMLVideoElement>(null);
+  const { user } = useAppSelector((state) => state.auth);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0] || null;
@@ -39,20 +43,31 @@ export default function StatusUpload() {
   const handleUpload = async () => {
     setUploading(true);
     setProgress(0);
-    // TODO: Upload each segment as a separate status (integrate with Firestore/Firebase Storage)
     for (let i = 0; i < segments.length; i++) {
-      // await uploadStatus(segments[i]);
+      await uploadStatus(user, segments[i], text);
       setProgress(((i + 1) / segments.length) * 100);
+    }
+    if (!file && text) {
+      await uploadStatus(user, null, text);
     }
     setUploading(false);
     alert('Status uploaded!');
     setFile(null);
     setSegments([]);
+    setText('');
+    if (onStatusUploaded) onStatusUploaded();
   };
 
   return (
     <div className="p-4 border rounded max-w-md mx-auto mt-10">
       <h2 className="text-xl font-bold mb-2">Upload Status</h2>
+      <textarea
+        className="border p-2 rounded w-full mb-2 bg-black/40 text-gray-100"
+        placeholder="What's on your mind? (optional)"
+        value={text}
+        onChange={e => setText(e.target.value)}
+        rows={2}
+      />
       <input type="file" accept="image/*,video/*" onChange={handleFileChange} />
       {file && (
         <div className="mt-4">

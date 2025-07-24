@@ -198,4 +198,32 @@ export const cleanUpDisappearingMessages = async () => {
       }
     }
   }
+};
+
+// Upload a status (image/video/text)
+export const uploadStatus = async (user, file, text = '') => {
+  let mediaUrl = '';
+  if (file) {
+    const storage = getStorage();
+    const ext = file.name.split('.').pop();
+    const fileRef = storageRef(storage, `statuses/${user.uid}_${Date.now()}.${ext}`);
+    await uploadBytes(fileRef, file);
+    mediaUrl = await getDownloadURL(fileRef);
+  }
+  await addDoc(collection(db, 'statuses'), {
+    uid: user.uid,
+    displayName: user.displayName,
+    photoURL: user.photoURL,
+    text,
+    mediaUrl,
+    createdAt: serverTimestamp(),
+    type: file ? file.type : 'text',
+  });
+};
+
+// Fetch all statuses (most recent first)
+export const fetchStatuses = async () => {
+  const q = query(collection(db, 'statuses'), orderBy('createdAt', 'desc'));
+  const snap = await getDocs(q);
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 }; 

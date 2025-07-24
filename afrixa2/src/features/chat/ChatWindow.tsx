@@ -94,9 +94,9 @@ export default function ChatWindow() {
   if (!currentChat) return <div className="flex-1 flex items-center justify-center">Select a chat to start messaging</div>;
 
   return (
-    <section className="flex-1 flex flex-col h-screen" aria-label="Chat window" role="main">
+    <section className="flex-1 flex flex-col h-screen bg-black/40 backdrop-blur-xl">
       <ChatWindowHeader />
-      <div className="flex-1 overflow-y-auto p-4 bg-gray-50" tabIndex={0} aria-label="Messages list">
+      <div className="flex-1 overflow-y-auto p-4 bg-transparent">
         {loading && <Spinner label="Loading messages..." />}
         {error && <ErrorBanner message={error} />}
         {optimisticError && <ErrorBanner message={optimisticError} onClose={() => setOptimisticError(null)} />}
@@ -105,14 +105,11 @@ export default function ChatWindow() {
           <div
             key={msg.id}
             className={`mb-2 ${msg.sender === user?.uid ? 'text-right' : 'text-left'} ${msg.deleting ? 'opacity-50 transition-opacity duration-500' : ''}`}
-            tabIndex={0}
-            role="listitem"
-            aria-label={`Message from ${msg.senderName}${msg.pending ? ', sending' : ''}${msg.deleting ? ', deleting' : ''}`}
           >
-            <div className="inline-block bg-white rounded p-2 shadow relative">
-              <span className="font-semibold">{msg.senderName}:</span>
+            <div className="inline-block card-glass relative max-w-xl">
+              <span className="font-semibold text-accent">{msg.senderName}:</span>
               {msg.replyTo && (
-                <div className="text-xs text-gray-400 border-l-2 pl-2 my-1">Replying to message {msg.replyTo}</div>
+                <div className="text-xs text-accent border-l-2 pl-2 my-1">Replying to message {msg.replyTo}</div>
               )}
               {msg.imageUrl && (
                 <img src={msg.imageUrl} alt="sent" className="max-w-xs max-h-40 my-2 rounded" />
@@ -123,10 +120,10 @@ export default function ChatWindow() {
                   <input
                     value={editText}
                     onChange={(e) => setEditText(e.target.value)}
-                    className="border p-1 rounded w-2/3 focus:outline focus:ring"
+                    className="border p-1 rounded w-2/3 focus:outline focus:ring bg-black/40 text-gray-100"
                     aria-label="Edit message text"
                   />
-                  <button className="ml-2 text-green-600 focus:outline focus:ring" onClick={() => handleEditSave(msg)} aria-label="Save edit">Save</button>
+                  <button className="ml-2 bg-accent text-black px-2 py-1 rounded focus:outline focus:ring" onClick={() => handleEditSave(msg)} aria-label="Save edit">Save</button>
                   <button className="ml-2 text-gray-400 focus:outline focus:ring" onClick={() => setEditingMsgId(null)} aria-label="Cancel edit">Cancel</button>
                 </>
               ) : (
@@ -141,9 +138,9 @@ export default function ChatWindow() {
                     ? 'Seen'
                     : 'Delivered'}
                 </span>
-                <button className="focus:outline focus:ring" onClick={() => handleReply(msg)} aria-label={`Reply to message from ${msg.senderName}`}>Reply</button>
-                {msg.sender === user?.uid && !msg.pending && !msg.deleting && <button className="focus:outline focus:ring" onClick={() => handleEdit(msg)} aria-label="Edit message">Edit</button>}
-                {msg.sender === user?.uid && !msg.pending && !msg.deleting && <button className="focus:outline focus:ring" onClick={() => handleDelete(msg)} aria-label="Delete message">Delete</button>}
+                <button className="focus:outline focus:ring text-accent" onClick={() => handleReply(msg)} aria-label={`Reply to message from ${msg.senderName}`}>Reply</button>
+                {msg.sender === user?.uid && !msg.pending && !msg.deleting && <button className="focus:outline focus:ring text-accent" onClick={() => handleEdit(msg)} aria-label="Edit message">Edit</button>}
+                {msg.sender === user?.uid && !msg.pending && !msg.deleting && <button className="focus:outline focus:ring text-red-400" onClick={() => handleDelete(msg)} aria-label="Delete message">Delete</button>}
               </div>
             </div>
           </div>
@@ -151,13 +148,13 @@ export default function ChatWindow() {
         <div ref={messagesEndRef} />
       </div>
       {replyTo && (
-        <div className="bg-blue-100 p-2 rounded mb-2 flex items-center gap-2">
-          <span className="font-semibold">Replying to {replyTo.senderName}:</span>
+        <div className="bg-accent/20 p-2 rounded mb-2 flex items-center gap-2 card-glass">
+          <span className="font-semibold text-accent">Replying to {replyTo.senderName}:</span>
           <span className="truncate">{replyTo.text}</span>
-          <button className="ml-2 text-gray-400" onClick={() => setReplyTo(null)}>Cancel</button>
+          <button className="ml-2 text-gray-400 focus:outline focus:ring" onClick={() => setReplyTo(null)}>Cancel</button>
         </div>
       )}
-      <footer className="p-4 bg-white border-t flex gap-2 items-center">
+      <footer className="p-4 bg-black/40 border-t border-white/10 flex gap-2 items-center card-glass">
         <input
           type="file"
           accept="image/*"
@@ -166,20 +163,20 @@ export default function ChatWindow() {
           className="hidden"
         />
         <button
-          className="bg-gray-200 p-2 rounded"
+          className="bg-accent text-black p-2 rounded focus:outline focus:ring"
           onClick={() => fileInputRef.current?.click()}
         >
           📎
         </button>
         <input
           type="text"
-          className="flex-1 border rounded p-2"
+          className="flex-1 border rounded p-2 bg-black/40 text-gray-100"
           placeholder={replyTo ? `Replying to ${replyTo.senderName}` : "Type a message..."}
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
         />
-        <button className="bg-green-500 text-white p-2 rounded" onClick={handleSend}>
+        <button className="bg-accent text-black p-2 rounded focus:outline focus:ring font-bold" onClick={handleSend}>
           Send
         </button>
       </footer>

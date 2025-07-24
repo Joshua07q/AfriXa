@@ -22,6 +22,5 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
 
   if (loading) return <div className="text-center mt-10">Loading...</div>;
   if (!user) return <AuthForm />;
-  if (!user.photoURL) return <ProfileSetup />;
   return <>{children}</>;
 } 

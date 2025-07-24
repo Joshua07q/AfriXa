@@ -1,8 +1,11 @@
 "use client";
 import React from 'react';
 import afrixaLogo from '../assets/Asset 1.png';
+import { useRouter } from 'next/navigation';
+
 
 export default function TutorialModal({ onClose }: { onClose: () => void }) {
+  const router = useRouter();
   return (
     <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
       <div className="bg-white rounded-lg shadow-lg max-w-lg w-full p-8 relative animate-fadeIn">
@@ -27,7 +30,10 @@ export default function TutorialModal({ onClose }: { onClose: () => void }) {
           </ul>
           <button
             className="mt-8 bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-8 rounded-full text-lg shadow focus:outline focus:ring"
-            onClick={onClose}
+            onClick={() => {
+              onClose();
+              router.push('/app');
+            }}
             aria-label="Close tutorial and start using AfriXa"
           >
             Start Using AfriXa
