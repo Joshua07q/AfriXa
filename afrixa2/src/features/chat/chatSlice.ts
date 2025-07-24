@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { getUserChats as getUserChatsAPI, getMessages, sendMessage, updateMessage, deleteMessage, markMessageSeen, removeGroupMember, leaveGroup, updateGroupInfo, updateChatSettings, getUser, Chat, Message } from '../../firebase/firestoreHelpers';
+import { getUserChats as getUserChatsAPI, getMessages, sendMessage, updateMessage, deleteMessage, markMessageSeen, removeGroupMember, leaveGroup, updateGroupInfo, updateChatSettings, getUser } from '../../firebase/firestoreHelpers';
+import { Chat, Message, User } from '../../types';
+import { Timestamp } from 'firebase/firestore';
 
 interface ChatState {
   chats: Chat[];
@@ -17,26 +19,26 @@ const initialState: ChatState = {
   error: null,
 };
 
-export const loadChats = createAsyncThunk('chat/loadChats', async (uid: string, { rejectWithValue }) => {
+export const loadChats = createAsyncThunk('chat/loadChats', async (uid: string) => {
   return new Promise<Chat[]>(async (resolve) => {
     getUserChatsAPI(uid, async (chats) => {
       const enhancedChats = await Promise.all(
         chats.map(async (chat) => {
           const otherMembers = (chat.members || []).filter((m: string) => m !== uid);
-          const membersData = await Promise.all(
+          const membersData = (await Promise.all(
             otherMembers.map(async (memberId: string) => await getUser(memberId))
-          );
+          )).filter((user): user is User => user !== null);
           return { ...chat, membersData };
         })
       );
-      resolve(enhancedChats);
+      resolve(enhancedChats as Chat[]);
     });
   });
 });
 
 export const selectChat = createAsyncThunk('chat/selectChat', async (chat: Chat) => chat);
 
-export const loadMessages = createAsyncThunk('chat/loadMessages', async (chatId: string, { rejectWithValue }) => {
+export const loadMessages = createAsyncThunk('chat/loadMessages', async (chatId: string) => {
   return new Promise<Message[]>((resolve) => {
     getMessages(chatId, (messages) => {
       resolve(messages);
@@ -50,8 +52,8 @@ export const sendChatMessage = createAsyncThunk(
     try {
       await sendMessage(chatId, message);
       return true;
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      return rejectWithValue((error as Error).message);
     }
   }
 );
@@ -62,8 +64,8 @@ export const editChatMessage = createAsyncThunk(
     try {
       await updateMessage(chatId, messageId, newContent);
       return { messageId, newContent };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      return rejectWithValue((error as Error).message);
     }
   }
 );
@@ -74,8 +76,8 @@ export const deleteChatMessage = createAsyncThunk(
     try {
       await deleteMessage(chatId, messageId);
       return messageId;
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      return rejectWithValue((error as Error).message);
     }
   }
 );
@@ -86,8 +88,8 @@ export const markMessageSeenThunk = createAsyncThunk(
     try {
       await markMessageSeen(chatId, messageId, uid);
       return { messageId, uid };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      return rejectWithValue((error as Error).message);
     }
   }
 );
@@ -98,8 +100,8 @@ export const removeGroupMemberThunk = createAsyncThunk(
     try {
       await removeGroupMember(chatId, uid);
       return { chatId, uid };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      return rejectWithValue((error as Error).message);
     }
   }
 );
@@ -110,8 +112,8 @@ export const leaveGroupThunk = createAsyncThunk(
     try {
       await leaveGroup(chatId, uid);
       return { chatId, uid };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      return rejectWithValue((error as Error).message);
     }
   }
 );
@@ -122,8 +124,8 @@ export const updateGroupInfoThunk = createAsyncThunk(
     try {
       await updateGroupInfo(chatId, groupName, groupImage);
       return { chatId, groupName, groupImage };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      return rejectWithValue((error as Error).message);
     }
   }
 );
@@ -134,8 +136,8 @@ export const updateChatSettingsThunk = createAsyncThunk(
     try {
       await updateChatSettings(chatId, settings);
       return { chatId, settings };
-    } catch (error: any) {
-      return rejectWithValue(error.message);
+    } catch (error: unknown) {
+      return rejectWithValue((error as Error).message);
     }
   }
 );
@@ -193,7 +195,7 @@ const chatSlice = createSlice({
       .addCase(editChatMessage.fulfilled, (state, action) => {
         const { messageId, newContent } = action.payload;
         state.messages = state.messages.map((msg) =>
-          msg.id === messageId ? { ...msg, ...newContent, editedAt: new Date() } : msg
+          msg.id === messageId ? { ...msg, ...newContent, editedAt: Timestamp.fromDate(new Date()) } : msg
         );
       })
       .addCase(sendChatMessage.pending, () => {
@@ -227,7 +229,7 @@ const chatSlice = createSlice({
           msg.id === messageId
             ? {
                 ...msg,
-                seenBy: msg.seenBy ? [...msg.seenBy, { uid, seenAt: new Date() }] : [{ uid, seenAt: new Date() }],
+                seenBy: msg.seenBy ? [...msg.seenBy, { uid, seenAt: Timestamp.fromDate(new Date()) }] : [{ uid, seenAt: Timestamp.fromDate(new Date()) }],
               }
             : msg
         );

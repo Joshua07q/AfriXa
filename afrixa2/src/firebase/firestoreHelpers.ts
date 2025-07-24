@@ -13,10 +13,9 @@ import {
   orderBy,
   onSnapshot,
   deleteDoc,
-  Timestamp,
-  FieldValue,
 } from 'firebase/firestore';
 import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { Chat, Message, Status } from '../types';
 
 // Types
 export interface User {
@@ -24,39 +23,6 @@ export interface User {
   displayName: string;
   photoURL: string;
   email: string;
-}
-export interface Chat {
-  id?: string;
-  members: string[];
-  isGroup: boolean;
-  groupName?: string;
-  groupImage?: string;
-  createdAt?: Timestamp | FieldValue;
-  lastMessage?: string;
-  lastMessageAt?: Timestamp | FieldValue;
-  expiresAt?: number | null;
-}
-export interface Message {
-  id?: string;
-  sender: string;
-  text?: string;
-  imageUrl?: string;
-  createdAt?: Timestamp | FieldValue;
-  editedAt?: Timestamp | FieldValue;
-  seenBy?: { uid: string; seenAt: Timestamp | FieldValue }[];
-  pending?: boolean;
-  deleting?: boolean;
-  replyTo?: string;
-}
-export interface Status {
-  id?: string;
-  uid: string;
-  displayName: string;
-  photoURL: string;
-  text?: string;
-  mediaUrl?: string;
-  createdAt?: Timestamp | FieldValue;
-  type?: string;
 }
 
 // USERS
@@ -120,7 +86,7 @@ export const sendMessage = async (chatId: string, message: Message & { imageFile
     createdAt: serverTimestamp(),
   });
   await updateDoc(doc(db, 'chats', chatId), {
-    lastMessage: message.text || (imageUrl ? 'Image' : ''),
+    lastMessage: message.content || (imageUrl ? 'Image' : ''),
     lastMessageAt: serverTimestamp(),
   });
 };
@@ -128,7 +94,7 @@ export const sendMessage = async (chatId: string, message: Message & { imageFile
 export const getMessages = (chatId: string, callback: (messages: Message[]) => void) => {
   const q = query(collection(db, 'chats', chatId, 'messages'), orderBy('createdAt'));
   return onSnapshot(q, (snapshot) => {
-    const messages: Message[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Message));
+    const messages: Message[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as unknown as Message));
     callback(messages);
   });
 };
@@ -264,8 +230,8 @@ export const uploadStatus = async (user: User, file: File | null, text = '') => 
 };
 
 // Fetch all statuses (most recent first)
-export const fetchStatuses = async () => {
+export const fetchStatuses = async (): Promise<Status[]> => {
   const q = query(collection(db, 'statuses'), orderBy('createdAt', 'desc'));
   const snap = await getDocs(q);
-  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  return snap.docs.map(doc => ({ id: doc.id, ...doc.data() } as unknown as Status));
 }; 

@@ -11,10 +11,10 @@ import Avatar from '../../components/Avatar';
 import { useRouter, usePathname } from 'next/navigation';
 import { FiMessageCircle, FiUser, FiSettings, FiBook, FiPlus, FiHelpCircle } from 'react-icons/fi';
 import type { User as ChatUser } from '../../firebase/firestoreHelpers';
-import type { Timestamp } from 'firebase/firestore';
+import { Chat } from '../../types';
 
 // Extend Chat type to include membersData
-interface ChatWithMembersData extends Omit<import('../../firebase/firestoreHelpers').Chat, 'membersData'> {
+interface ChatWithMembersData extends Chat {
   membersData?: ChatUser[];
 }
 
@@ -99,8 +99,8 @@ export default function ChatSidebar() {
                 <div className="text-xs text-gray-500 truncate">{chat.lastMessage}</div>
               </div>
               <div className="text-xs text-gray-400 min-w-[60px] text-right">
-                {chat.lastMessageAt && isTimestamp(chat.lastMessageAt)
-                  ? formatDistanceToNow(new Date(chat.lastMessageAt.seconds * 1000), { addSuffix: true })
+                {chat.lastMessageTimestamp && isDate(chat.lastMessageTimestamp)
+                  ? formatDistanceToNow(chat.lastMessageTimestamp, { addSuffix: true })
                   : ''}
               </div>
             </li>
@@ -112,7 +112,7 @@ export default function ChatSidebar() {
   );
 }
 
-// Type guard for Firestore Timestamp
-function isTimestamp(obj: unknown): obj is Timestamp {
-  return !!obj && typeof obj === 'object' && 'seconds' in obj && typeof (obj as { seconds: number }).seconds === 'number';
+// Type guard for Date
+function isDate(obj: unknown): obj is Date {
+  return obj instanceof Date;
 } 

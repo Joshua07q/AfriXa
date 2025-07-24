@@ -6,11 +6,11 @@ import CallModal from './CallModal';
 import ChatSettingsModal from './ChatSettingsModal';
 import Avatar from '../../components/Avatar';
 import type { User as ChatUser } from '../../firebase/firestoreHelpers';
+import { Chat } from '../../types';
 
 // Extend Chat type to include membersData and disappearingDuration
-interface ChatWithMembersData extends Omit<import('../../firebase/firestoreHelpers').Chat, 'membersData' | 'disappearingDuration'> {
+interface ChatWithMembersData extends Chat {
   membersData?: ChatUser[];
-  disappearingDuration?: number;
 }
 
 export default function ChatWindowHeader() {
@@ -81,7 +81,7 @@ export default function ChatWindowHeader() {
     <header className="p-4 border-b font-bold bg-white flex items-center gap-3">
       <Avatar src={avatarSrc} name={avatarName} size={40} />
       <div>
-        <div>{name}</div>
+        <div>{avatarName}</div>
         {isGroup && <div className="text-xs text-gray-500">{members}</div>}
       </div>
       {isGroup && (

@@ -61,7 +61,7 @@ export default function ProfileSetup() {
       } else {
         router.push('/app/chat');
       }
-    } catch (err) {
+    } catch {
       alert('Failed to update profile.');
     } finally {
       setLoading(false);
