@@ -1,11 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import afrixaLogo from '../assets/Asset 1.png';
 
 export default function WelcomeLoader() {
   return (
     <div className="fixed inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-green-100 to-yellow-50 z-50">
       <motion.img
-        src={require('../assets/Asset 1.png').default ?? '/src/assets/Asset 1.png'}
+        src={afrixaLogo.src}
         alt="AfriXa Logo"
         className="w-32 h-32 mb-6 drop-shadow-lg"
         initial={{ scale: 0.8, opacity: 0 }}

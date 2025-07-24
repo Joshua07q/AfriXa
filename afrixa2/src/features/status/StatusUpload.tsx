@@ -63,7 +63,7 @@ export default function StatusUpload({ onStatusUploaded }: { onStatusUploaded?: 
       <h2 className="text-xl font-bold mb-2">Upload Status</h2>
       <textarea
         className="border p-2 rounded w-full mb-2 bg-black/40 text-gray-100"
-        placeholder="What's on your mind? (optional)"
+        placeholder="What&apos;s on your mind? (optional)"
         value={text}
         onChange={e => setText(e.target.value)}
         rows={2}
