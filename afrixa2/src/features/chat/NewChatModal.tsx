@@ -5,12 +5,13 @@ import { useAppSelector } from '../../store/hooks';
 import Spinner from '../../components/Spinner';
 import ErrorBanner from '../../components/ErrorBanner';
 import EmptyState from '../../components/EmptyState';
+import { User } from '../../types';
 
 export default function NewChatModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { user } = useAppSelector((state) => state.auth);
   const [search, setSearch] = useState('');
-  const [results, setResults] = useState<any[]>([]);
-  const [selected, setSelected] = useState<any[]>([]);
+  const [results, setResults] = useState<User[]>([]);
+  const [selected, setSelected] = useState<User[]>([]);
   const [groupName, setGroupName] = useState('');
   const [groupImage, setGroupImage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -18,19 +19,20 @@ export default function NewChatModal({ open, onClose }: { open: boolean; onClose
   const [expiresIn, setExpiresIn] = useState('');
 
   const handleSearch = async () => {
+    if (!user) return;
     setLoading(true);
     setError('');
     try {
       const users = await searchUsers(search);
-      setResults(users.filter((u: any) => u.uid !== user.uid));
-    } catch (err) {
+      setResults(users.filter((u) => u.uid !== user.uid));
+    } catch {
       setError('Search failed');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSelect = (u: any) => {
+  const handleSelect = (u: User) => {
     if (selected.some((s) => s.uid === u.uid)) {
       setSelected(selected.filter((s) => s.uid !== u.uid));
     } else {
@@ -39,6 +41,7 @@ export default function NewChatModal({ open, onClose }: { open: boolean; onClose
   };
 
   const handleCreate = async () => {
+    if (!user) return;
     setLoading(true);
     setError('');
     try {
@@ -52,7 +55,7 @@ export default function NewChatModal({ open, onClose }: { open: boolean; onClose
         await createChat([user.uid, ...selected.map((u) => u.uid)], true, groupName, groupImage, expiresAt);
       }
       onClose();
-    } catch (err) {
+    } catch {
       setError('Failed to create chat');
     } finally {
       setLoading(false);

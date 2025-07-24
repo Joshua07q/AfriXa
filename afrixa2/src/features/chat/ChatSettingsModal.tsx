@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { updateChatSettingsThunk } from './chatSlice';
+import { Chat } from '../../types';
 
 const durations = [
   { label: 'Off', value: 0 },
@@ -10,15 +11,22 @@ const durations = [
   { label: '1 week', value: 7 * 24 * 60 * 60 * 1000 },
 ];
 
-export default function ChatSettingsModal({ open, onClose }) {
-  const { currentChat } = useAppSelector((state) => state.chat);
+interface ChatSettingsModalProps {
+  open: boolean;
+  onClose: () => void;
+}
+
+export default function ChatSettingsModal({ open, onClose }: ChatSettingsModalProps) {
+  const { currentChat } = useAppSelector((state) => state.chat) as { currentChat: Chat | null };
   const dispatch = useAppDispatch();
   const [duration, setDuration] = useState(currentChat?.disappearingDuration || 0);
 
   if (!open || !currentChat) return null;
 
   const handleSave = () => {
-    dispatch(updateChatSettingsThunk({ chatId: currentChat.id, settings: { disappearingDuration: duration } }));
+    if (currentChat && currentChat.id) {
+      dispatch(updateChatSettingsThunk({ chatId: currentChat.id, settings: { disappearingDuration: duration } }));
+    }
     onClose();
   };
 

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { updateGroupInfoThunk, removeGroupMemberThunk, leaveGroupThunk } from './chatSlice';
 import Avatar from '../../components/Avatar';
+import { User } from '../../types';
 
 export default function GroupInfoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { currentChat } = useAppSelector((state) => state.chat);
@@ -14,13 +15,19 @@ export default function GroupInfoModal({ open, onClose }: { open: boolean; onClo
   if (!open || !currentChat?.isGroup) return null;
 
   const handleUpdate = () => {
-    dispatch(updateGroupInfoThunk({ chatId: currentChat.id, groupName, groupImage }));
+    if (currentChat && currentChat.id) {
+      dispatch(updateGroupInfoThunk({ chatId: currentChat.id, groupName, groupImage }));
+    }
   };
   const handleRemove = (uid: string) => {
-    dispatch(removeGroupMemberThunk({ chatId: currentChat.id, uid }));
+    if (currentChat && currentChat.id) {
+      dispatch(removeGroupMemberThunk({ chatId: currentChat.id, uid }));
+    }
   };
   const handleLeave = () => {
-    dispatch(leaveGroupThunk({ chatId: currentChat.id, uid: user.uid }));
+    if (currentChat && currentChat.id && user) {
+      dispatch(leaveGroupThunk({ chatId: currentChat.id, uid: user.uid }));
+    }
     onClose();
   };
 
@@ -46,11 +53,11 @@ export default function GroupInfoModal({ open, onClose }: { open: boolean; onClo
         <div className="mb-4">
           <div className="font-semibold mb-2">Members</div>
           <ul>
-            {currentChat.membersData?.map((m: any) => (
+            {currentChat.membersData?.map((m: User) => (
               <li key={m.uid} className="flex items-center gap-2 mb-1">
                 <Avatar src={m.photoURL} name={m.displayName} size={32} />
                 <span>{m.displayName}</span>
-                {m.uid !== user.uid && (
+                {user && m.uid !== user.uid && (
                   <button className="ml-2 text-red-500" onClick={() => handleRemove(m.uid)}>
                     Remove
                   </button>

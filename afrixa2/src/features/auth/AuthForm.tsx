@@ -5,6 +5,7 @@ import { signIn, signUp } from './authSlice';
 import afrixaLogo from '../../assets/Asset 1.png';
 import asset2 from '../../assets/Asset 2.png';
 import { useRouter, usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 export default function AuthForm({ mode }: { mode?: 'login' | 'signup' }) {
   const router = useRouter();
@@ -33,9 +34,9 @@ export default function AuthForm({ mode }: { mode?: 'login' | 'signup' }) {
 
   return (
     <div className="relative">
-      <img src={asset2.src} alt="Brand asset 2" className="absolute top-0 right-0 w-24 h-24 opacity-10 pointer-events-none select-none" aria-hidden="true" />
+      <Image src={asset2.src} alt="Brand asset 2" className="absolute top-0 right-0 w-24 h-24 opacity-10 pointer-events-none select-none" aria-hidden="true" width={96} height={96} />
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-sm mx-auto mt-10 relative z-10">
-        <img src={afrixaLogo} alt="AfriXa Logo" className="w-20 h-20 mx-auto mb-4" />
+        <Image src={afrixaLogo.src} alt="AfriXa Logo" className="w-20 h-20 mx-auto mb-4" width={80} height={80} />
         <h2 className="text-2xl font-bold mb-2">{isSignup ? 'Sign Up' : 'Login'}</h2>
         <input
           type="email"

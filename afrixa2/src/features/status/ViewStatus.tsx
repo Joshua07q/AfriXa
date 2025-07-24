@@ -2,16 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Avatar from '../../components/Avatar';
 import { fetchStatuses } from '../../firebase/firestoreHelpers';
 import Image from 'next/image';
-
-interface Status {
-  id: string;
-  displayName: string;
-  photoURL: string;
-  createdAt?: { toDate?: () => Date };
-  mediaUrl?: string;
-  type?: string;
-  text?: string;
-}
+import { Status } from '../../types';
+import { Timestamp } from 'firebase/firestore';
 
 export default function ViewStatus() {
   const [statuses, setStatuses] = useState<Status[]>([]);
@@ -42,7 +34,9 @@ export default function ViewStatus() {
               <div className="flex-1">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-accent">{status.displayName}</span>
-                  <span className="text-xs text-gray-400">{status.createdAt?.toDate ? status.createdAt.toDate().toLocaleString() : ''}</span>
+                  <span className="text-xs text-gray-400">
+                    {status.createdAt instanceof Timestamp ? status.createdAt.toDate().toLocaleString() : ''}
+                  </span>
                 </div>
                 {status.mediaUrl && status.type?.startsWith('image') && (
                   <Image src={status.mediaUrl} alt="status" width={400} height={192} className="w-full max-h-48 object-cover rounded my-2" />

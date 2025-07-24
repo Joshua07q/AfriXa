@@ -5,7 +5,6 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { auth } from '../../firebase';
 import { setUser, serializeUser } from './authSlice';
 import AuthForm from './AuthForm';
-import ProfileSetup from './ProfileSetup';
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const { user } = useAppSelector((state) => state.auth);
