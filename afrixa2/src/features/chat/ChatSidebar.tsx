@@ -9,7 +9,7 @@ import ErrorBanner from '../../components/ErrorBanner';
 import EmptyState from '../../components/EmptyState';
 import Avatar from '../../components/Avatar';
 import { useRouter, usePathname } from 'next/navigation';
-import { FiMessageCircle, FiUser, FiSettings, FiBook, FiPlus, FiHelpCircle } from 'react-icons/fi';
+import { FiMessageCircle, FiUser, FiSettings, FiBook, FiPlus, FiHelpCircle, FiPhone, FiVideo } from 'react-icons/fi';
 import type { User as ChatUser } from '../../firebase/firestoreHelpers';
 import { Chat } from '../../types';
 
@@ -39,31 +39,30 @@ export default function ChatSidebar() {
 
   return (
     <aside className="w-72 h-screen p-4 overflow-y-auto bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10" aria-label="Chat sidebar" role="complementary">
-      <h2 className="text-xl font-bold mb-4 text-accent flex items-center gap-2"><FiMessageCircle className="inline-block text-accent" /> Chats</h2>
-      <button className="mb-4 bg-accent text-black p-2 rounded w-full focus:outline focus:ring font-bold flex items-center gap-2 justify-center shadow" onClick={() => setModalOpen(true)} aria-label="Start a new chat or group"><FiPlus /> New Chat / Group</button>
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-on-primary">Afrixa</h1>
+        <Image src="/logo.png" alt="Afrixa Logo" width={40} height={40} />
+      </div>
+      <button className="mb-4 bg-accent text-on-secondary p-3 rounded-lg w-full font-bold flex items-center gap-2 justify-center shadow-lg" onClick={() => setModalOpen(true)} aria-label="Start a new chat or group"><FiPlus /> New Chat / Group</button>
       <nav className="flex flex-col gap-2 mb-4">
         <button
-          className={`flex items-center gap-2 text-left p-2 rounded ${pathname === '/app' ? 'bg-accent text-black font-bold' : 'hover:bg-white/10'}`}
+          className={`flex items-center gap-3 text-left p-3 rounded-lg ${pathname === '/app' ? 'bg-accent text-on-secondary font-bold' : 'hover:bg-surface'}`}
           onClick={() => router.push('/app')}
         ><FiMessageCircle /> Chats</button>
         <button
-          className={`flex items-center gap-2 text-left p-2 rounded ${pathname === '/app/status' ? 'bg-accent text-black font-bold' : 'hover:bg-white/10'}`}
+          className={`flex items-center gap-3 text-left p-3 rounded-lg ${pathname === '/app/status' ? 'bg-accent text-on-secondary font-bold' : 'hover:bg-surface'}`}
           onClick={() => router.push('/app/status')}
         ><FiBook /> Status</button>
         <button
-          className={`flex items-center gap-2 text-left p-2 rounded ${pathname === '/app/new' ? 'bg-accent text-black font-bold' : 'hover:bg-white/10'}`}
-          onClick={() => router.push('/app/new')}
-        ><FiPlus /> New Chat/Group</button>
-        <button
-          className={`flex items-center gap-2 text-left p-2 rounded ${pathname === '/app/settings' ? 'bg-accent text-black font-bold' : 'hover:bg-white/10'}`}
+          className={`flex items-center gap-3 text-left p-3 rounded-lg ${pathname === '/app/settings' ? 'bg-accent text-on-secondary font-bold' : 'hover:bg-surface'}`}
           onClick={() => router.push('/app/settings')}
         ><FiSettings /> Settings</button>
         <button
-          className={`flex items-center gap-2 text-left p-2 rounded ${pathname === '/app/profile' ? 'bg-accent text-black font-bold' : 'hover:bg-white/10'}`}
+          className={`flex items-center gap-3 text-left p-3 rounded-lg ${pathname === '/app/profile' ? 'bg-accent text-on-secondary font-bold' : 'hover:bg-surface'}`}
           onClick={() => router.push('/app/profile')}
         ><FiUser /> Profile</button>
         <button
-          className={`flex items-center gap-2 text-left p-2 rounded ${pathname === '/app/tutorial' ? 'bg-accent text-black font-bold' : 'hover:bg-white/10'}`}
+          className={`flex items-center gap-3 text-left p-3 rounded-lg ${pathname === '/app/tutorial' ? 'bg-accent text-on-secondary font-bold' : 'hover:bg-surface'}`}
           onClick={() => router.push('/app/tutorial')}
         ><FiHelpCircle /> Tutorial</button>
       </nav>

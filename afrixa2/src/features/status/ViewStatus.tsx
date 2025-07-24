@@ -29,22 +29,22 @@ export default function ViewStatus() {
         <div className="space-y-6">
           {statuses.length === 0 && <div className="text-gray-400">No statuses yet.</div>}
           {statuses.map((status) => (
-            <div key={status.id} className="bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10 p-6 mb-4 flex items-center gap-4">
-              <Avatar name={status.displayName} src={status.photoURL} size={48} />
+            <div key={status.id} className="bg-surface rounded-xl shadow-lg p-6 flex items-start gap-4">
+              <Avatar name={status.displayName} src={status.photoURL} size={56} />
               <div className="flex-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold text-accent">{status.displayName}</span>
-                  <span className="text-xs text-gray-400">
+                <div className="flex items-baseline gap-3">
+                  <span className="font-bold text-lg text-on-surface">{status.displayName}</span>
+                  <span className="text-sm text-gray-400">
                     {status.createdAt instanceof Timestamp ? status.createdAt.toDate().toLocaleString() : ''}
                   </span>
                 </div>
+                {status.text && <p className="text-on-surface mt-2">{status.text}</p>}
                 {status.mediaUrl && status.type?.startsWith('image') && (
-                  <Image src={status.mediaUrl} alt="status" width={400} height={192} className="w-full max-h-48 object-cover rounded my-2" />
+                  <Image src={status.mediaUrl} alt="status" width={400} height={225} className="w-full object-cover rounded-lg my-3" />
                 )}
                 {status.mediaUrl && status.type?.startsWith('video') && (
-                  <video src={status.mediaUrl} controls className="w-full max-h-48 rounded my-2" />
+                  <video src={status.mediaUrl} controls className="w-full rounded-lg my-3" />
                 )}
-                {status.text && <div className="text-lg text-gray-100 mt-1">{status.text}</div>}
               </div>
             </div>
           ))}

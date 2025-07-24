@@ -7,6 +7,7 @@ import ChatSettingsModal from './ChatSettingsModal';
 import Avatar from '../../components/Avatar';
 import type { User as ChatUser } from '../../firebase/firestoreHelpers';
 import { Chat } from '../../types';
+import { FiPhone, FiVideo, FiSettings, FiInfo } from 'react-icons/fi';
 
 // Extend Chat type to include membersData and disappearingDuration
 interface ChatWithMembersData extends Chat {
@@ -78,33 +79,37 @@ export default function ChatWindowHeader() {
   }
 
   return (
-    <header className="p-4 border-b font-bold bg-white flex items-center gap-3">
-      <Avatar src={avatarSrc} name={avatarName} size={40} />
-      <div>
-        <div>{avatarName}</div>
-        {isGroup && <div className="text-xs text-gray-500">{members}</div>}
+    <header className="p-4 bg-surface border-b border-gray-700 flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <Avatar src={avatarSrc} name={avatarName} size={40} />
+        <div>
+          <div className="font-bold text-on-surface">{avatarName}</div>
+          {isGroup && <div className="text-xs text-gray-400">{members}</div>}
+        </div>
       </div>
-      {isGroup && (
-        <button className="ml-auto bg-blue-500 text-white p-2 rounded" onClick={() => setModalOpen(true)}>
-          Group Info
+      <div className="flex items-center gap-2">
+        {!isGroup && (
+          <>
+            <button className="p-2 rounded-full bg-erin hover:bg-green-700 text-on-secondary" onClick={() => { setCallType('voice'); setCallModalOpen(true); }}>
+              <FiPhone />
+            </button>
+            <button className="p-2 rounded-full bg-erin hover:bg-green-700 text-on-secondary" onClick={() => { setCallType('video'); setCallModalOpen(true); }}>
+              <FiVideo />
+            </button>
+          </>
+        )}
+        <button className="p-2 rounded-full bg-gray-700 hover:bg-gray-600 text-on-surface" onClick={() => setSettingsModalOpen(true)}>
+          <FiSettings />
         </button>
-      )}
-      {!isGroup && (
-        <>
-          <button className="ml-2 bg-green-500 text-white p-2 rounded" onClick={() => { setCallType('voice'); setCallModalOpen(true); }}>
-            Voice Call
+        {isGroup && (
+          <button className="p-2 rounded-full bg-gray-700 hover:bg-gray-600 text-on-surface" onClick={() => setModalOpen(true)}>
+            <FiInfo />
           </button>
-          <button className="ml-2 bg-blue-500 text-white p-2 rounded" onClick={() => { setCallType('video'); setCallModalOpen(true); }}>
-            Video Call
-          </button>
-        </>
-      )}
-      <button className="ml-2 bg-gray-500 text-white p-2 rounded" onClick={() => setSettingsModalOpen(true)}>
-        Settings
-      </button>
+        )}
+      </div>
       <ChatSettingsModal open={settingsModalOpen} onClose={() => setSettingsModalOpen(false)} />
       {currentChat.disappearingDuration && currentChat.disappearingDuration > 0 && (
-        <span className="ml-2 text-xs text-red-500">Disappearing: {currentChat.disappearingDuration / 1000 / 60} min</span>
+        <span className="text-xs text-red-500">Disappearing: {currentChat.disappearingDuration / 1000 / 60} min</span>
       )}
       <GroupInfoModal open={modalOpen} onClose={() => setModalOpen(false)} />
       {renderCallModal()}

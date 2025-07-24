@@ -10,7 +10,21 @@ module.exports = {
     "./src/types/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        'penn-blue': '#06023B',
+        'smoky-black': '#191308',
+        'erin': '#05f04b',
+        'background': '#06023B',
+        'surface': '#191308',
+        'accent': '#05f04b',
+        'on-primary': '#FFFFFF',
+        'on-secondary': '#000000',
+        'on-background': '#FFFFFF',
+        'on-surface': '#FFFFFF',
+        'error': '#B00020',
+      },
+    },
   },
   plugins: [],
 } 

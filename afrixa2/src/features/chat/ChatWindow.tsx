@@ -9,6 +9,7 @@ import EmptyState from '../../components/EmptyState';
 import Image from 'next/image';
 import { Message } from '../../types';
 import { Timestamp } from 'firebase/firestore';
+import { FiPaperclip, FiSend } from 'react-icons/fi';
 
 // Type for optimistic messages
 interface OptimisticMessage extends Message {
@@ -180,21 +181,21 @@ export default function ChatWindow() {
           className="hidden"
         />
         <button
-          className="bg-accent text-black p-2 rounded focus:outline focus:ring"
+          className="p-2 rounded-full bg-primary hover:bg-primary-dark text-on-primary"
           onClick={() => fileInputRef.current?.click()}
         >
-          📎
+          <FiPaperclip />
         </button>
         <input
           type="text"
-          className="flex-1 border rounded p-2 bg-black/40 text-gray-100"
+          className="flex-1 border rounded-full py-2 px-4 bg-surface text-on-surface"
           placeholder={replyTo ? `Replying to ${'senderName' in replyTo ? replyTo.senderName : user?.displayName}` : "Type a message..."}
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSend()}
         />
-        <button className="bg-accent text-black p-2 rounded focus:outline focus:ring font-bold" onClick={handleSend}>
-          Send
+        <button className="p-2 rounded-full bg-accent hover:bg-green-700 text-on-secondary" onClick={handleSend}>
+          <FiSend />
         </button>
       </footer>
     </section>

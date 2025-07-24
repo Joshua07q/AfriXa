@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 body {
-  @apply bg-gradient-to-br via-[#1a2a1a] to-[#222] min-h-screen text-gray-100 font-sans;
+  @apply bg-penn-blue min-h-screen text-on-background font-sans;
   background-image:
     url('/african-pattern.svg'),
-    linear-gradient(135deg, rgba(34,34,34,0.95) 0%, rgba(26,42,26,0.95) 100%);
+    linear-gradient(135deg, rgba(6, 2, 59, 0.95) 0%, rgba(25, 19, 8, 0.95) 100%);
   background-blend-mode: overlay;
   background-size: cover, 400px;
   background-repeat: repeat, no-repeat;

@@ -13,7 +13,7 @@ export default function Landing() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-100 to-yellow-50 relative overflow-hidden">
       <Image
         src={afrixaLogo.src}
-        alt="AfriXa Logo"
+        alt="Afrixa Logo"
         width={128}
         height={128}
         className="w-32 h-32 mb-6 drop-shadow-lg z-10"
@@ -41,14 +41,14 @@ export default function Landing() {
           className="w-12 h-12"
         />
       </div>
-      <h1 className="text-4xl md:text-5xl font-extrabold text-green-700 mb-2 z-10">Welcome to AfriXa</h1>
-      <p className="text-lg text-gray-600 mb-8 z-10">Connecting Africa, One Chat at a Time</p>
+      <h1 className="text-5xl md:text-6xl font-extrabold text-primary mb-4 z-10">Welcome to Afrixa</h1>
+      <p className="text-xl text-on-background mb-8 z-10">Connecting Africa, One Chat at a Time</p>
       <button
-        className="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-8 rounded-full text-lg shadow-lg focus:outline focus:ring transition z-10"
+        className="bg-accent hover:bg-green-700 text-on-secondary font-bold py-4 px-10 rounded-full text-xl shadow-lg focus:outline focus:ring transition z-10"
         onClick={() => router.push('/app')}
-        aria-label="Enter AfriXa App"
+        aria-label="Enter Afrixa App"
       >
-        Enter AfriXa
+        Enter Afrixa
       </button>
     </div>
   );
