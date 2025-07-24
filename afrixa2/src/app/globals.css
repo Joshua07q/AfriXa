@@ -1,9 +1,7 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 body {
-  @apply bg-gradient-to-br from-black via-[#1a2a1a] to-[#222] min-h-screen text-gray-100 font-sans;
+  @apply bg-gradient-to-br via-[#1a2a1a] to-[#222] min-h-screen text-gray-100 font-sans;
   background-image:
     url('/african-pattern.svg'), /* Add your SVG pattern to public/ */
     linear-gradient(135deg, rgba(34,34,34,0.95) 0%, rgba(26,42,26,0.95) 100%);
