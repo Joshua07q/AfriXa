@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { updateGroupInfoThunk, removeGroupMemberThunk, leaveGroupThunk } from './chatSlice';
 import Avatar from '../../components/Avatar';
+import { User } from '../../types';
+import styles from './GroupInfoModal.module.css';
 
 export default function GroupInfoModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { currentChat } = useAppSelector((state) => state.chat);
@@ -14,19 +16,27 @@ export default function GroupInfoModal({ open, onClose }: { open: boolean; onClo
   if (!open || !currentChat?.isGroup) return null;
 
   const handleUpdate = () => {
-    dispatch(updateGroupInfoThunk({ chatId: currentChat.id, groupName, groupImage }));
+    if (currentChat?.id) {
+      dispatch(updateGroupInfoThunk({ chatId: currentChat.id, groupName, groupImage }));
+    }
   };
+
   const handleRemove = (uid: string) => {
-    dispatch(removeGroupMemberThunk({ chatId: currentChat.id, uid }));
+    if (currentChat?.id) {
+      dispatch(removeGroupMemberThunk({ chatId: currentChat.id, uid }));
+    }
   };
+
   const handleLeave = () => {
-    dispatch(leaveGroupThunk({ chatId: currentChat.id, uid: user.uid }));
-    onClose();
+    if (currentChat?.id && user?.uid) {
+      dispatch(leaveGroupThunk({ chatId: currentChat.id, uid: user.uid }));
+      onClose();
+    }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
+    <div className={styles['modal-overlay']}>
+      <div className={styles['modal-content']}>
         <h2 className="text-xl font-bold mb-4">Group Info</h2>
         <input
           type="text"
@@ -46,11 +56,11 @@ export default function GroupInfoModal({ open, onClose }: { open: boolean; onClo
         <div className="mb-4">
           <div className="font-semibold mb-2">Members</div>
           <ul>
-            {currentChat.membersData?.map((m: any) => (
+            {currentChat.membersData?.map((m: User) => (
               <li key={m.uid} className="flex items-center gap-2 mb-1">
                 <Avatar src={m.photoURL} name={m.displayName} size={32} />
                 <span>{m.displayName}</span>
-                {m.uid !== user.uid && (
+                {user && m.uid !== user.uid && (
                   <button className="ml-2 text-red-500" onClick={() => handleRemove(m.uid)}>
                     Remove
                   </button>
