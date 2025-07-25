@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 body {
-  @apply bg-penn-blue min-h-screen text-on-background font-sans;
+  @apply bg-background min-h-screen text-on-background font-sans;
   background-image:
     url('/african-pattern.svg'),
     linear-gradient(135deg, rgba(6, 2, 59, 0.95) 0%, rgba(25, 19, 8, 0.95) 100%);
