@@ -81,13 +81,13 @@ export default function ProfileSetup() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-sm mx-auto mt-10 relative z-10">
         <Image
           src={afrixaLogo.src}
-          alt="AfriXa Logo"
+          alt="Afrixa Logo"
           className="w-20 h-20 mx-auto mb-4"
           width={80}
           height={80}
         />
-        <h2 className="text-2xl font-bold mb-2">Set up your profile</h2>
-        <div className="flex flex-col items-center gap-2">
+        <h2 className="text-3xl font-bold mb-4 text-primary">Set up your profile</h2>
+        <div className="flex flex-col items-center gap-4">
           <input
             type="file"
             accept="image/*"
@@ -96,7 +96,7 @@ export default function ProfileSetup() {
             className="hidden"
           />
           <div
-            className="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer overflow-hidden"
+            className="w-32 h-32 rounded-full bg-surface flex items-center justify-center cursor-pointer overflow-hidden border-4 border-accent"
             onClick={() => fileInputRef.current?.click()}
           >
             {photoURL ? (
@@ -104,17 +104,17 @@ export default function ProfileSetup() {
                 src={photoURL}
                 alt="Profile"
                 className="w-full h-full object-cover"
-                width={96}
-                height={96}
+                width={128}
+                height={128}
               />
             ) : (
-              <span>Upload</span>
+              <span className="text-on-surface">Upload</span>
             )}
           </div>
           {progress > 0 && progress < 100 && (
-            <div className="w-full bg-gray-100 rounded-full h-2">
+            <div className="w-full bg-surface rounded-full h-2">
               <div
-                className="bg-green-500 h-2 rounded-full"
+                className="bg-accent h-2 rounded-full"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -126,9 +126,9 @@ export default function ProfileSetup() {
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
           required
-          className="border p-2 rounded"
+          className="border p-3 rounded bg-surface text-on-surface"
         />
-        <button type="submit" className="bg-green-500 text-white p-2 rounded" disabled={loading}>
+        <button type="submit" className="bg-accent text-on-secondary font-bold p-3 rounded" disabled={loading}>
           {loading ? 'Saving...' : 'Save Profile'}
         </button>
       </form>

@@ -71,32 +71,31 @@ export default function StatusUpload({ onStatusUploaded }: { onStatusUploaded?: 
   };
 
   return (
-    <div className="p-4 border rounded max-w-md mx-auto mt-10">
-      <h2 className="text-xl font-bold mb-2">Upload Status</h2>
+    <div className="space-y-4">
       <textarea
-        className="border p-2 rounded w-full mb-2 bg-black/40 text-gray-100"
-        placeholder="What&apos;s on your mind? (optional)"
+        className="border p-3 rounded-lg w-full bg-smoky-black text-on-surface"
+        placeholder="What's on your mind?"
         value={text}
         onChange={e => setText(e.target.value)}
-        rows={2}
+        rows={3}
       />
-      <input type="file" accept="image/*,video/*" onChange={handleFileChange} />
+      <input type="file" accept="image/*,video/*" onChange={handleFileChange} className="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-erin file:text-on-secondary hover:file:bg-green-700" />
       {file && (
         <div className="mt-4">
           {file.type.startsWith('video/') ? (
-            <video ref={videoRef} src={URL.createObjectURL(file)} controls className="w-full max-h-48" />
+            <video ref={videoRef} src={URL.createObjectURL(file)} controls className="w-full rounded-lg" />
           ) : (
-            <Image src={URL.createObjectURL(file)} alt="status" width={400} height={192} className="w-full max-h-48 object-cover" />
+            <Image src={URL.createObjectURL(file)} alt="status preview" width={400} height={225} className="w-full object-cover rounded-lg" />
           )}
         </div>
       )}
-      {segments.length > 1 && <div className="text-xs text-gray-500">Video will be split into {segments.length} clips of 30s each.</div>}
+      {segments.length > 1 && <div className="text-xs text-gray-400">Video will be split into {segments.length} clips of 30s each.</div>}
       <button
-        className="bg-green-500 text-white p-2 rounded mt-4 w-full"
+        className="bg-erin text-on-secondary font-bold p-3 rounded-lg w-full disabled:opacity-50"
         onClick={handleUpload}
-        disabled={!file || uploading}
+        disabled={(!file && !text) || uploading}
       >
-        {uploading ? `Uploading... ${progress.toFixed(0)}%` : 'Upload Status'}
+        {uploading ? `Uploading... ${progress.toFixed(0)}%` : 'Post Status'}
       </button>
     </div>
   );

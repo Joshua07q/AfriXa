@@ -36,15 +36,15 @@ export default function AuthForm({ mode }: { mode?: 'login' | 'signup' }) {
     <div className="relative">
       <Image src={asset2.src} alt="Brand asset 2" className="absolute top-0 right-0 w-24 h-24 opacity-10 pointer-events-none select-none" aria-hidden="true" width={96} height={96} />
       <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-sm mx-auto mt-10 relative z-10">
-        <Image src={afrixaLogo.src} alt="AfriXa Logo" className="w-20 h-20 mx-auto mb-4" width={80} height={80} />
-        <h2 className="text-2xl font-bold mb-2">{isSignup ? 'Sign Up' : 'Login'}</h2>
+        <Image src={afrixaLogo.src} alt="Afrixa Logo" className="w-24 h-24 mx-auto mb-6" width={96} height={96} />
+        <h2 className="text-3xl font-bold mb-4 text-primary">{isSignup ? 'Create an Account' : 'Login to Afrixa'}</h2>
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
-          className="border p-2 rounded"
+          className="border p-3 rounded bg-surface text-on-surface"
         />
         <input
           type="password"
@@ -52,7 +52,7 @@ export default function AuthForm({ mode }: { mode?: 'login' | 'signup' }) {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
-          className="border p-2 rounded"
+          className="border p-3 rounded bg-surface text-on-surface"
         />
         {isSignup && (
           <input
@@ -61,16 +61,16 @@ export default function AuthForm({ mode }: { mode?: 'login' | 'signup' }) {
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
             required
-            className="border p-2 rounded"
+            className="border p-3 rounded bg-surface text-on-surface"
           />
         )}
-        {error && <div className="text-red-500">{error}</div>}
-        <button type="submit" className="bg-green-500 text-white p-2 rounded" disabled={loading}>
+        {error && <div className="text-error">{error}</div>}
+        <button type="submit" className="bg-accent text-on-secondary font-bold p-3 rounded" disabled={loading}>
           {loading ? 'Loading...' : isSignup ? 'Sign Up' : 'Login'}
         </button>
         <button
           type="button"
-          className="text-blue-500 underline mt-2"
+          className="text-accent hover:underline mt-4"
           onClick={() => router.push(isSignup ? '/auth/login' : '/auth/signup')}
         >
           {isSignup ? 'Already have an account? Login' : "Don't have an account? Sign Up"}
