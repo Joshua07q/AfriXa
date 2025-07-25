@@ -8,6 +8,11 @@ import { Timestamp } from 'firebase/firestore';
 export default function ViewStatus() {
   const [statuses, setStatuses] = useState<Status[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const loadStatuses = async () => {
     setLoading(true);
@@ -35,7 +40,7 @@ export default function ViewStatus() {
                 <div className="flex items-baseline gap-3">
                   <span className="font-bold text-lg text-on-surface">{status.displayName}</span>
                   <span className="text-sm text-gray-400">
-                    {status.createdAt instanceof Timestamp ? status.createdAt.toDate().toLocaleString() : ''}
+                    {isClient && status.createdAt instanceof Timestamp ? status.createdAt.toDate().toLocaleString() : ''}
                   </span>
                 </div>
                 {status.text && <p className="text-on-surface mt-2">{status.text}</p>}

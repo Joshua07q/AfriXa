@@ -29,8 +29,13 @@ export default function ChatSidebar() {
   };
   const { user } = useAppSelector((state) => state.auth);
   const [modalOpen, setModalOpen] = useState(false);
+  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
     if (user?.uid) {
@@ -99,7 +104,7 @@ export default function ChatSidebar() {
                 <div className="text-xs text-gray-500 truncate">{chat.lastMessage}</div>
               </div>
               <div className="text-xs text-gray-400 min-w-[60px] text-right">
-                {chat.lastMessageTimestamp && isDate(chat.lastMessageTimestamp)
+                {isClient && chat.lastMessageTimestamp && isDate(chat.lastMessageTimestamp)
                   ? formatDistanceToNow(chat.lastMessageTimestamp, { addSuffix: true })
                   : ''}
               </div>
