@@ -2,6 +2,7 @@
    return (
    )
 -    <section className="flex-1 flex flex-col h-screen bg-black/40 backdrop-blur-xl">
+    <section className="flex-1 flex flex-col h-screen bg-black/40 backdrop-blur-xl border-l border-white/10">
 +    <section className="flex-1 flex flex-col h-screen bg-black/40 backdrop-blur-xl border-l border-white/10">
        <ChatWindowHeader />
 -      <div className="flex-1 overflow-y-auto p-4 bg-transparent">
@@ -16,6 +17,7 @@
 )
 }
 -        <div className="bg-accent/20 p-2 rounded mb-2 flex items-center gap-2 bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10 p-6 mb-4">
+        <div className="bg-accent/20 p-4 rounded-xl mb-2 flex items-center gap-2 bg-black/60 backdrop-blur-lg shadow-lg border border-white/10">
 +        <div className="bg-accent/20 p-4 rounded-xl mb-2 flex items-center gap-2 bg-black/60 backdrop-blur-lg shadow-lg border border-white/10">
            <span className="font-semibold text-accent">Replying to {'senderName' in replyTo ? replyTo.senderName : user?.displayName}:</span>
            <span className="truncate">{replyTo.content}</span>
