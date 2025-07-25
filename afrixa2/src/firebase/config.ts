@@ -4,13 +4,13 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA2Eoj_zRSIG7hZVt86bEUqOP5vqMWvQ2o",
-  authDomain: "afrixa-d4002.firebaseapp.com",
-  projectId: "afrixa-d4002",
-  storageBucket: "afrixa-d4002.firebasestorage.app",
-  messagingSenderId: "413151076185",
-  appId: "1:413151076185:web:b8f3e4a06bdb9abb18b648",
-  measurementId: "G-ZEPJ3S5ZVZ"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
