@@ -5,13 +5,13 @@
    @apply bg-background min-h-screen text-on-background font-sans;
    background-image:
 -    url('/african-pattern.svg'),
-+    url('/african-pattern.svg'),
+     url('/african-pattern.svg'),
      linear-gradient(135deg, rgba(6, 2, 59, 0.95) 0%, rgba(25, 19, 8, 0.95) 100%);
    background-blend-mode: overlay;
--  background-size: cover, 400px;
-+  background-size: 400px, cover;
+   background-size: cover, 400px;
+   background-size: 400px, cover;
    background-repeat: repeat, no-repeat;
-+  background-attachment: fixed;
+   background-attachment: fixed;
  }
 
  ::-webkit-scrollbar {
