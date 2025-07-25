@@ -1,14 +1,7 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    "./src/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/features/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/store/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/utils/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/types/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+import type { Config } from 'tailwindcss'
+
+const config: Config = {
+  content: ['./src/**/*.{js,ts,jsx,tsx}', './app/**/*.{js,ts,jsx,tsx}'],
   theme: {
     extend: {
       colors: {
@@ -22,9 +15,10 @@ module.exports = {
         'on-secondary': '#000000',
         'on-background': '#FFFFFF',
         'on-surface': '#FFFFFF',
-        'error': '#B00020',
+        'error': '#FF5252',
       },
     },
   },
   plugins: [],
-} 
+}
+export default config
