@@ -9,7 +9,8 @@ import ErrorBanner from '../../components/ErrorBanner';
 import EmptyState from '../../components/EmptyState';
 import Avatar from '../../components/Avatar';
 import { useRouter, usePathname } from 'next/navigation';
-import { FiMessageCircle, FiUser, FiSettings, FiBook, FiPlus, FiHelpCircle, FiPhone, FiVideo } from 'react-icons/fi';
+import Image from 'next/image';
+import { FiMessageCircle, FiUser, FiSettings, FiBook, FiPlus, FiHelpCircle } from 'react-icons/fi';
 import type { User as ChatUser } from '../../firebase/firestoreHelpers';
 import { Chat } from '../../types';
 
