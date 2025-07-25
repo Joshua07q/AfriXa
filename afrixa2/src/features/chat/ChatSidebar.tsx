@@ -39,7 +39,7 @@ export default function ChatSidebar() {
   }, [user, dispatch]);
 
   return (
-    <aside className="w-72 h-screen p-4 overflow-y-auto bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10" aria-label="Chat sidebar" role="complementary">
+    <aside className="w-full md:w-72 h-screen p-4 overflow-y-auto bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10" aria-label="Chat sidebar" role="complementary">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-on-primary">Afrixa</h1>
         <Image src="/logo.png" alt="Afrixa Logo" width={40} height={40} />
