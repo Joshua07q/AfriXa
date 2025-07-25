@@ -1,28 +1,35 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-body {
-  @apply bg-background min-h-screen text-on-background font-sans;
-  background-image:
-    url('/african-pattern.svg'),
-    linear-gradient(135deg, rgba(6, 2, 59, 0.95) 0%, rgba(25, 19, 8, 0.95) 100%);
-  background-blend-mode: overlay;
-  background-size: cover, 400px;
-  background-repeat: repeat, no-repeat;
-}
+@layer base {
+  body {
+    @apply bg-background min-h-screen text-on-background font-sans;
+    background-image:
+      url('/african-pattern.svg'),
+      linear-gradient(135deg, rgba(6, 2, 59, 0.95) 0%, rgba(25, 19, 8, 0.95) 100%);
+    background-blend-mode: overlay;
+    background-size: cover, 400px;
+    background-repeat: repeat, no-repeat;
+  }
 
-::-webkit-scrollbar {
-  width: 8px;
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #222c;
-  border-radius: 8px;
-}
+  ::-webkit-scrollbar {
+    width: 8px;
+    background: transparent;
+  }
 
-input, textarea, select {
-  @apply bg-black/40 border border-white/10 text-gray-100 placeholder-gray-400 focus:ring-green-500 focus:border-green-500;
-}
+  ::-webkit-scrollbar-thumb {
+    background: #222c;
+    border-radius: 8px;
+  }
 
-button {
-  @apply transition font-semibold focus:outline focus:ring focus:ring-green-500;
+  input,
+  textarea,
+  select {
+    @apply bg-black/40 border border-white/10 text-gray-100 placeholder-gray-400 focus:ring-accent focus:border-accent;
+  }
+
+  button {
+    @apply transition font-semibold focus:outline-none focus:ring focus:ring-accent;
+  }
 }
