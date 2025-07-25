@@ -1,28 +1,37 @@
-@import "tailwindcss";
+@@ .. @@
+ @import "tailwindcss";
 
-body {
-  @apply bg-background min-h-screen text-on-background font-sans;
-  background-image:
-    url('/african-pattern.svg'),
-    linear-gradient(135deg, rgba(6, 2, 59, 0.95) 0%, rgba(25, 19, 8, 0.95) 100%);
-  background-blend-mode: overlay;
-  background-size: cover, 400px;
-  background-repeat: repeat, no-repeat;
-}
+ body {
+   @apply bg-background min-h-screen text-on-background font-sans;
+   background-image:
+-    url('/african-pattern.svg'),
++    url('/african-pattern.svg'),
+     linear-gradient(135deg, rgba(6, 2, 59, 0.95) 0%, rgba(25, 19, 8, 0.95) 100%);
+   background-blend-mode: overlay;
+-  background-size: cover, 400px;
++  background-size: 400px, cover;
+   background-repeat: repeat, no-repeat;
++  background-attachment: fixed;
+ }
 
-::-webkit-scrollbar {
-  width: 8px;
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: #222c;
-  border-radius: 8px;
-}
+ ::-webkit-scrollbar {
+   width: 8px;
+   background: transparent;
+ }
+ ::-webkit-scrollbar-thumb {
+-  background: #222c;
++  background: rgba(34, 34, 34, 0.8);
+   border-radius: 8px;
+ }
++::-webkit-scrollbar-thumb:hover {
++  background: rgba(34, 34, 34, 1);
++}
 
-input, textarea, select {
-  @apply bg-black/40 border border-white/10 text-gray-100 placeholder-gray-400 focus:ring-green-500 focus:border-green-500;
-}
+ input, textarea, select {
+   @apply bg-black/40 border border-white/10 text-gray-100 placeholder-gray-400 focus:ring-green-500 focus:border-green-500;
+ }
 
-button {
-  @apply transition font-semibold focus:outline focus:ring focus:ring-green-500;
-}
+ button {
+-  @apply transition font-semibold focus:outline focus:ring focus:ring-green-500;
++  @apply transition-all duration-200 font-semibold focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50;
+ }
