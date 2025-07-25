@@ -9,3 +9,4 @@ import { FiMessageCircle, FiUser, FiSettings, FiBook, FiPlus, FiHelpCircle } fro
         {/* Logo will be added when available */}
       </div>
       <button className="mb-4 bg-accent text-on-secondary p-3 rounded-lg w-full font-bold flex items-center gap-2 justify-center shadow-lg" onClick={() => setModalOpen(true)} aria-label="Start a new chat or group"><FiPlus /> New Chat / Group</button>
+  )
