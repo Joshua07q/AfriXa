@@ -43,13 +43,22 @@ export default function Landing() {
       </div>
       <h1 className="text-5xl md:text-6xl font-extrabold text-primary mb-4 z-10">Welcome to Afrixa</h1>
       <p className="text-xl text-on-background mb-8 z-10">Connecting Africa, One Chat at a Time</p>
-      <button
-        className="bg-accent hover:bg-green-700 text-on-secondary font-bold py-4 px-10 rounded-full text-xl shadow-lg focus:outline focus:ring transition z-10"
-        onClick={() => router.push('/app')}
-        aria-label="Enter Afrixa App"
-      >
-        Enter Afrixa
-      </button>
+      <div className="flex gap-4 z-10">
+        <button
+          className="bg-accent hover:bg-green-700 text-on-secondary font-bold py-4 px-10 rounded-full text-xl shadow-lg focus:outline focus:ring transition"
+          onClick={() => router.push('/auth/signup')}
+          aria-label="Sign up for Afrixa"
+        >
+          Get Started
+        </button>
+        <button
+          className="bg-transparent border-2 border-accent text-accent hover:bg-accent hover:text-on-secondary font-bold py-4 px-10 rounded-full text-xl shadow-lg focus:outline focus:ring transition"
+          onClick={() => router.push('/auth/login')}
+          aria-label="Login to Afrixa"
+        >
+          Login
+        </button>
+      </div>
     </div>
   );
 }

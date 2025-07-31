@@ -1,15 +1,11 @@
 "use client";
 import React from 'react';
-import ChatSidebar from '../../features/chat/ChatSidebar';
 import ChatShortcuts from '../../features/chat/ChatShortcuts';
 import LogoutButton from '../../features/auth/LogoutButton';
 
 export default function AppIndex() {
   return (
     <div className="flex h-screen bg-background">
-      {/* Chat Sidebar */}
-      <ChatSidebar />
-      
       {/* Main Content */}
       <div className="flex-1 flex flex-col">
         {/* Chat Shortcuts */}
