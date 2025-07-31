@@ -1,13 +1,29 @@
 "use client";
 import React, { useState, useEffect } from 'react';
-import WelcomeLoader from './WelcomeLoader';
+import { useAppSelector } from '../store/hooks';
+import Navigation from './Navigation';
 import ReduxProvider from '../store/provider';
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
-  const [showLoader, setShowLoader] = useState(true);
+  const { user } = useAppSelector((state) => state.auth);
+  const [isClient, setIsClient] = useState(false);
+
   useEffect(() => {
-    const timer = setTimeout(() => setShowLoader(false), 2000);
-    return () => clearTimeout(timer);
+    setIsClient(true);
   }, []);
-  return showLoader ? <WelcomeLoader /> : <ReduxProvider>{children}</ReduxProvider>;
+
+  if (!isClient) {
+    return null;
+  }
+
+  return (
+    <ReduxProvider>
+      <div className="min-h-screen bg-background">
+        {user && <Navigation />}
+        <main className={user ? "pt-16" : ""}>
+          {children}
+        </main>
+      </div>
+    </ReduxProvider>
+  );
 } 

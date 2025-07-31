@@ -58,9 +58,27 @@ export const createChat = async (members: string[], isGroup = false, groupName =
 
 export const getUserChats = (uid: string, callback: (chats: Chat[]) => void) => {
   const q = query(collection(db, 'chats'));
-  return onSnapshot(q, (snapshot) => {
+  return onSnapshot(q, async (snapshot) => {
     const chats: Chat[] = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Chat));
-    callback(chats.filter(chat => chat.members.includes(uid)));
+    const userChats = chats.filter(chat => chat.members.includes(uid));
+    
+    // Fetch member data for each chat
+    const chatsWithMembers = await Promise.all(
+      userChats.map(async (chat) => {
+        const memberData = await Promise.all(
+          chat.members.map(async (memberId) => {
+            const userDoc = await getDoc(doc(db, 'users', memberId));
+            return userDoc.exists() ? userDoc.data() as User : null;
+          })
+        );
+        return {
+          ...chat,
+          membersData: memberData.filter(Boolean) as User[]
+        };
+      })
+    );
+    
+    callback(chatsWithMembers);
   });
 };
 

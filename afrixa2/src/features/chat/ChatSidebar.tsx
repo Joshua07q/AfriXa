@@ -9,8 +9,17 @@ import ErrorBanner from '../../components/ErrorBanner';
 import EmptyState from '../../components/EmptyState';
 import Avatar from '../../components/Avatar';
 import { useRouter, usePathname } from 'next/navigation';
-import Image from 'next/image';
-import { FiMessageCircle, FiUser, FiSettings, FiBook, FiPlus, FiHelpCircle } from 'react-icons/fi';
+import { 
+  FiMessageCircle, 
+  FiUser, 
+  FiSettings, 
+  FiBook, 
+  FiPlus, 
+  FiSearch,
+  FiUsers,
+  FiClock,
+  FiMoreVertical
+} from 'react-icons/fi';
 import type { User as ChatUser } from '../../firebase/firestoreHelpers';
 import { Chat } from '../../types';
 
@@ -44,80 +53,150 @@ export default function ChatSidebar() {
   }, [user, dispatch]);
 
   return (
-    <aside className="w-full md:w-72 h-screen p-4 overflow-y-auto bg-black/60 backdrop-blur-lg rounded-xl shadow-lg border border-white/10" aria-label="Chat sidebar" role="complementary">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-on-primary">Afrixa</h1>
-        <Image src="/logo.png" alt="Afrixa Logo" width={40} height={40} />
+    <aside className="w-full md:w-80 h-screen bg-surface border-r border-accent/20 flex flex-col" aria-label="Chat sidebar" role="complementary">
+      {/* Header */}
+      <div className="p-6 border-b border-accent/20 bg-surface">
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 bg-accent rounded-lg flex items-center justify-center">
+              <span className="text-primary font-bold text-lg">A</span>
+            </div>
+            <h1 className="text-2xl font-bold text-on-surface">AfriXa</h1>
+          </div>
+        </div>
+        
+        {/* New Chat Button */}
+        <button 
+          className="w-full bg-accent text-primary p-4 rounded-xl font-semibold flex items-center gap-3 justify-center shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105" 
+          onClick={() => setModalOpen(true)} 
+          aria-label="Start a new chat or group"
+        >
+          <FiPlus className="text-lg" />
+          <span>New Chat / Group</span>
+        </button>
       </div>
-      <button className="mb-4 bg-accent text-on-secondary p-3 rounded-lg w-full font-bold flex items-center gap-2 justify-center shadow-lg" onClick={() => setModalOpen(true)} aria-label="Start a new chat or group"><FiPlus /> New Chat / Group</button>
-      <nav className="flex flex-col gap-2 mb-4">
-        <button
-          className={`flex items-center gap-3 text-left p-3 rounded-lg ${pathname === '/app' ? 'bg-accent text-on-secondary font-bold' : 'hover:bg-surface'}`}
-          onClick={() => router.push('/app')}
-        ><FiMessageCircle /> Chats</button>
-        <button
-          className={`flex items-center gap-3 text-left p-3 rounded-lg ${pathname === '/app/status' ? 'bg-accent text-on-secondary font-bold' : 'hover:bg-surface'}`}
-          onClick={() => router.push('/app/status')}
-        ><FiBook /> Status</button>
-        <button
-          className={`flex items-center gap-3 text-left p-3 rounded-lg ${pathname === '/app/settings' ? 'bg-accent text-on-secondary font-bold' : 'hover:bg-surface'}`}
-          onClick={() => router.push('/app/settings')}
-        ><FiSettings /> Settings</button>
-        <button
-          className={`flex items-center gap-3 text-left p-3 rounded-lg ${pathname === '/app/profile' ? 'bg-accent text-on-secondary font-bold' : 'hover:bg-surface'}`}
-          onClick={() => router.push('/app/profile')}
-        ><FiUser /> Profile</button>
-        <button
-          className={`flex items-center gap-3 text-left p-3 rounded-lg ${pathname === '/app/tutorial' ? 'bg-accent text-on-secondary font-bold' : 'hover:bg-surface'}`}
-          onClick={() => router.push('/app/tutorial')}
-        ><FiHelpCircle /> Tutorial</button>
+
+      {/* Navigation */}
+      <nav className="p-4 border-b border-accent/20">
+        <div className="space-y-2">
+          <button
+            className={`w-full flex items-center gap-3 text-left p-3 rounded-xl transition-all duration-200 ${
+              pathname === '/app' 
+                ? 'bg-accent text-primary font-semibold shadow-md' 
+                : 'text-on-surface hover:bg-accent/10 hover:text-accent'
+            }`}
+            onClick={() => router.push('/app')}
+          >
+            <FiMessageCircle className="text-lg" />
+            <span>Chats</span>
+          </button>
+          
+          <button
+            className={`w-full flex items-center gap-3 text-left p-3 rounded-xl transition-all duration-200 ${
+              pathname === '/app/status' 
+                ? 'bg-accent text-primary font-semibold shadow-md' 
+                : 'text-on-surface hover:bg-accent/10 hover:text-accent'
+            }`}
+            onClick={() => router.push('/app/status')}
+          >
+            <FiBook className="text-lg" />
+            <span>Status</span>
+          </button>
+          
+          <button
+            className={`w-full flex items-center gap-3 text-left p-3 rounded-xl transition-all duration-200 ${
+              pathname === '/app/settings' 
+                ? 'bg-accent text-primary font-semibold shadow-md' 
+                : 'text-on-surface hover:bg-accent/10 hover:text-accent'
+            }`}
+            onClick={() => router.push('/app/settings')}
+          >
+            <FiSettings className="text-lg" />
+            <span>Settings</span>
+          </button>
+          
+          <button
+            className={`w-full flex items-center gap-3 text-left p-3 rounded-xl transition-all duration-200 ${
+              pathname === '/app/profile' 
+                ? 'bg-accent text-primary font-semibold shadow-md' 
+                : 'text-on-surface hover:bg-accent/10 hover:text-accent'
+            }`}
+            onClick={() => router.push('/app/profile')}
+          >
+            <FiUser className="text-lg" />
+            <span>Profile</span>
+          </button>
+        </div>
       </nav>
-      {loading && <Spinner label="Loading chats..." />}
-      {error && <ErrorBanner message={error} />}
-      {!loading && chats.length === 0 && <EmptyState message="No chats yet" icon={<span>💬</span>} />}
-      <ul aria-labelledby="sidebar-heading">
-        {chats.map((chat) => {
-          const isSelected = currentChat?.id === chat.id;
-          return (
-            <li
-              key={chat.id}
-              className={`flex items-center gap-2 p-2 rounded cursor-pointer mb-2 ${isSelected ? 'bg-green-200' : 'hover:bg-gray-200'} focus:outline focus:ring`}
-              onClick={() => router.push(chat.isGroup ? `/app/group/${chat.id}` : `/app/chat/${chat.id}`)}
-              tabIndex={0}
-              role="option"
-              aria-selected={isSelected}
-              onKeyDown={e => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  dispatch(selectChat(chat));
-                }
-              }}
-            >
-              <Avatar
-                src={chat.isGroup ? chat.groupImage : (chat.membersData?.find((m: ChatUser) => m.uid !== user?.uid)?.photoURL)}
-                name={chat.isGroup ? chat.groupName : chat.membersData?.filter((m: ChatUser) => m.uid !== user?.uid).map((m: ChatUser) => m.displayName).join(', ')}
-                size={40}
-              />
-              <div className="flex-1">
-                <div className="font-semibold">
-                  {chat.isGroup ? chat.groupName : chat.membersData?.filter((m: ChatUser) => m.uid !== user?.uid).map((m: ChatUser) => m.displayName).join(', ')}
+
+      {/* Chat List */}
+      <div className="flex-1 overflow-y-auto p-4">
+        {loading && <Spinner label="Loading chats..." />}
+        {error && <ErrorBanner message={error} />}
+        {!loading && chats.length === 0 && (
+          <EmptyState 
+            message="No chats yet" 
+            icon={<FiMessageCircle className="text-4xl text-accent" />} 
+          />
+        )}
+        
+        <ul aria-labelledby="sidebar-heading" className="space-y-2">
+          {chats.map((chat) => {
+            const isSelected = currentChat?.id === chat.id;
+            const otherMembers = chat.membersData?.filter((m: ChatUser) => m.uid !== user?.uid) || [];
+            const chatName = chat.isGroup 
+              ? chat.groupName 
+              : otherMembers.map((m: ChatUser) => m.displayName).join(', ');
+            const lastMessage = chat.lastMessage || 'No messages yet';
+            
+            return (
+              <li
+                key={chat.id}
+                className={`group flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 ${
+                  isSelected 
+                    ? 'bg-accent text-primary shadow-md' 
+                    : 'hover:bg-accent/10 hover:text-accent text-on-surface'
+                }`}
+                onClick={() => router.push(chat.isGroup ? `/app/group/${chat.id}` : `/app/chat/${chat.id}`)}
+                tabIndex={0}
+                role="option"
+                aria-selected={isSelected}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    dispatch(selectChat(chat));
+                  }
+                }}
+              >
+                <Avatar
+                  src={chat.isGroup ? chat.groupImage : otherMembers[0]?.photoURL}
+                  name={chatName}
+                  size={48}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold truncate">{chatName}</h3>
+                    {chat.lastMessageTimestamp && (
+                      <span className="text-xs opacity-70 flex items-center gap-1">
+                        <FiClock className="text-xs" />
+                        {formatDistanceToNow(chat.lastMessageTimestamp.toDate(), { addSuffix: true })}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm opacity-70 truncate flex items-center gap-1">
+                    {chat.isGroup && <FiUsers className="text-xs" />}
+                    {lastMessage}
+                  </p>
                 </div>
-                <div className="text-xs text-gray-500 truncate">{chat.lastMessage}</div>
-              </div>
-              <div className="text-xs text-gray-400 min-w-[60px] text-right">
-                {isClient && chat.lastMessageTimestamp && isDate(chat.lastMessageTimestamp)
-                  ? formatDistanceToNow(chat.lastMessageTimestamp, { addSuffix: true })
-                  : ''}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+                <button className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  <FiMoreVertical className="text-sm" />
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+      
       <NewChatModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </aside>
   );
-}
-
-// Type guard for Date
-function isDate(obj: unknown): obj is Date {
-  return obj instanceof Date;
 } 

@@ -7,6 +7,7 @@ import {
   updateProfile as firebaseUpdateProfile,
   User,
 } from 'firebase/auth';
+import { createUser } from '../../firebase/firestoreHelpers';
 
 // Add a utility to extract only serializable user data from Firebase User
 export function serializeUser(user: User | null) {
@@ -43,6 +44,14 @@ export const signUp = createAsyncThunk(
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       if (auth.currentUser) {
         await firebaseUpdateProfile(auth.currentUser, { displayName });
+        
+        // Create user document in Firestore
+        await createUser({
+          uid: userCredential.user.uid,
+          displayName: displayName,
+          photoURL: userCredential.user.photoURL || '',
+          email: email,
+        });
       }
       return serializeUser(userCredential.user);
     } catch (error: unknown) {
