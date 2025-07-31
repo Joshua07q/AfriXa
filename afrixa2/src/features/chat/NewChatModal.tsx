@@ -92,7 +92,7 @@ export default function NewChatModal({ open, onClose }: { open: boolean; onClose
         onClose();
         window.location.href = `/app/group/${chatId}`;
       }
-    } catch (error) {
+    } catch (_error) {
       setError('Failed to create chat');
     } finally {
       setLoading(false);
