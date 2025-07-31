@@ -4,12 +4,8 @@ import { useAppSelector } from '../store/hooks';
 import { formatDistanceToNow } from 'date-fns';
 import { FiMessageCircle, FiX } from 'react-icons/fi';
 
-interface ChatNotificationProps {
-  onClose?: () => void;
-}
-
-export default function ChatNotification({ onClose }: ChatNotificationProps) {
-  const { chats, currentChat } = useAppSelector((state) => state.chat);
+export default function ChatNotification() {
+  const { chats } = useAppSelector((state) => state.chat);
   const { user } = useAppSelector((state) => state.auth);
   const [notifications, setNotifications] = useState<Array<{
     id: string;
@@ -27,7 +23,7 @@ export default function ChatNotification({ onClose }: ChatNotificationProps) {
       // Check if this is a recent chat (within last 5 minutes)
       const messageTime = lastMessageTime instanceof Date 
         ? lastMessageTime 
-        : (lastMessageTime as any)?.toDate?.() || new Date();
+        : (lastMessageTime as { toDate: () => Date })?.toDate?.() || new Date();
       
       return Date.now() - messageTime.getTime() < 5 * 60 * 1000; // 5 minutes
     });

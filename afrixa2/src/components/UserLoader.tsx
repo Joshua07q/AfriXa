@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { loadChats } from '../features/chat/chatSlice';
 
