@@ -22,22 +22,16 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# Redirect rules
+# Redirect rules for Next.js
+[[redirects]]
+  from = "/_next/static/*"
+  to = "/_next/static/:splat"
+  status = 200
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-[[redirects]]
-  from = "/old-page"
-  to = "/new-page"
-  status = 301 # Permanent redirect
-
-[[redirects]]
-  from = "/temporary-offer"
-  to = "/current-offer"
-  status = 302 # Temporary redirect
-  force = false # Set to true to process even if a file exists at the 'from' path
 
 [functions]
   directory = "netlify/functions"
