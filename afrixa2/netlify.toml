@@ -1,0 +1,29 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+# Header rules
+[[headers]]
+  # Apply these headers to all pages
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+
+[[headers]]
+  # Apply caching headers to static assets
+  for = "/static/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Redirect rules
+[[redirects]]
+  from = "/old-page"
+  to = "/new-page"
+  status = 301 # Permanent redirect
+
+[[redirects]]
+  from = "/temporary-offer"
+  to = "/current-offer"
+  status = 302 # Temporary redirect
+  force = false # Set to true to process even if a file exists at the 'from' path
