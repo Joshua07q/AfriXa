@@ -66,10 +66,19 @@ export default function ChatShortcuts() {
                       {chat.isGroup && <FiUsers className="text-xs" />}
                       {chatName}
                     </h4>
-                                         {chat.lastMessageTimestamp && 'toDate' in chat.lastMessageTimestamp && (
+                                         {chat.lastMessageTimestamp && (
                        <span className="text-xs opacity-70 flex items-center gap-1">
                          <FiClock className="text-xs" />
-                         {formatDistanceToNow(chat.lastMessageTimestamp.toDate(), { addSuffix: true })}
+                         {(() => {
+                           try {
+                             if (chat.lastMessageTimestamp && typeof chat.lastMessageTimestamp === 'object' && 'toDate' in chat.lastMessageTimestamp) {
+                               return formatDistanceToNow((chat.lastMessageTimestamp as { toDate: () => Date }).toDate(), { addSuffix: true });
+                             }
+                             return '';
+                           } catch {
+                             return '';
+                           }
+                         })()}
                        </span>
                      )}
                   </div>

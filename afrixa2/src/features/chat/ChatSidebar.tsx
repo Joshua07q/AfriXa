@@ -15,7 +15,6 @@ import {
   FiSettings, 
   FiBook, 
   FiPlus, 
-  FiSearch,
   FiUsers,
   FiClock,
   FiMoreVertical
@@ -38,13 +37,8 @@ export default function ChatSidebar() {
   };
   const { user } = useAppSelector((state) => state.auth);
   const [modalOpen, setModalOpen] = useState(false);
-  const [isClient, setIsClient] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
 
   useEffect(() => {
     if (user?.uid) {
@@ -175,12 +169,21 @@ export default function ChatSidebar() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold truncate">{chatName}</h3>
-                    {chat.lastMessageTimestamp && (
-                      <span className="text-xs opacity-70 flex items-center gap-1">
-                        <FiClock className="text-xs" />
-                        {formatDistanceToNow(chat.lastMessageTimestamp.toDate(), { addSuffix: true })}
-                      </span>
-                    )}
+                                         {chat.lastMessageTimestamp && (
+                       <span className="text-xs opacity-70 flex items-center gap-1">
+                         <FiClock className="text-xs" />
+                         {(() => {
+                           try {
+                             if (chat.lastMessageTimestamp && typeof chat.lastMessageTimestamp === 'object' && 'toDate' in chat.lastMessageTimestamp) {
+                               return formatDistanceToNow((chat.lastMessageTimestamp as { toDate: () => Date }).toDate(), { addSuffix: true });
+                             }
+                             return '';
+                           } catch {
+                             return '';
+                           }
+                         })()}
+                       </span>
+                     )}
                   </div>
                   <p className="text-sm opacity-70 truncate flex items-center gap-1">
                     {chat.isGroup && <FiUsers className="text-xs" />}
